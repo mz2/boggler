@@ -51,6 +51,18 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
     margin: '0 auto',
   };
 
+  // Color palette for different word paths
+  const pathColors = [
+    '#dc2626', // red
+    '#ea580c', // orange
+    '#d97706', // amber
+    '#059669', // emerald
+    '#0891b2', // cyan
+    '#4f46e5', // indigo
+    '#9333ea', // purple
+    '#db2777', // pink
+  ];
+
   return (
     <div className="game-over-container">
       <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-gray-100">Game Over!</h1>
@@ -64,46 +76,115 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
 
       {/* Grid with highlighted found words */}
       <div className="grid-container mb-8">
-        <div style={gridStyle}>
-          {grid.cells.map((row) =>
-            row.map((cell) => {
-              const posKey = `${cell.row},${cell.col}`;
-              const isFound = foundPositions.has(posKey);
-              const isMissed = missedPositions.has(posKey);
-              const pathNumber = positionToPathNumber.get(posKey);
-              return (
-                <div
-                  key={`${cell.row}-${cell.col}`}
-                  className={`grid-cell ${isFound ? 'found' : ''} ${isMissed ? 'missed' : ''}`}
-                  data-row={cell.row}
-                  data-col={cell.col}
-                  style={{ position: 'relative' }}
-                >
-                  {cell.letter}
-                  {isMissed && pathNumber && (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        top: '2px',
-                        right: '4px',
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                        color: '#b45309',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                        borderRadius: '50%',
-                        width: '18px',
-                        height: '18px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {pathNumber}
-                    </span>
-                  )}
-                </div>
-              );
-            })
+        <div style={{ position: 'relative' }}>
+          <div style={gridStyle}>
+            {grid.cells.map((row) =>
+              row.map((cell) => {
+                const posKey = `${cell.row},${cell.col}`;
+                const isFound = foundPositions.has(posKey);
+                const isMissed = missedPositions.has(posKey);
+                const pathNumber = positionToPathNumber.get(posKey);
+                return (
+                  <div
+                    key={`${cell.row}-${cell.col}`}
+                    className={`grid-cell ${isFound ? 'found' : ''} ${isMissed ? 'missed' : ''}`}
+                    data-row={cell.row}
+                    data-col={cell.col}
+                    style={{ position: 'relative' }}
+                  >
+                    {cell.letter}
+                    {isMissed && pathNumber && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '2px',
+                          right: '4px',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold',
+                          color: '#b45309',
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          borderRadius: '50%',
+                          width: '18px',
+                          height: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {pathNumber}
+                      </span>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* SVG overlay for drawing paths */}
+          {unfoundSeededWords.length > 0 && (
+            <svg
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+              }}
+              viewBox={`0 0 ${grid.size * 100} ${grid.size * 100}`}
+            >
+              {unfoundSeededWords.map((word, wordIndex) => {
+                const color = pathColors[wordIndex % pathColors.length];
+                return (
+                  <g key={wordIndex}>
+                    {/* Draw lines connecting positions */}
+                    {word.positions.map((pos, posIndex) => {
+                      if (posIndex === word.positions.length - 1) return null;
+                      const nextPos = word.positions[posIndex + 1];
+
+                      // Calculate cell centers (accounting for gap)
+                      const x1 = pos.col * 100 + 50;
+                      const y1 = pos.row * 100 + 50;
+                      const x2 = nextPos.col * 100 + 50;
+                      const y2 = nextPos.row * 100 + 50;
+
+                      return (
+                        <line
+                          key={posIndex}
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke={color}
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          opacity="0.8"
+                        />
+                      );
+                    })}
+
+                    {/* Draw dots at each position */}
+                    {word.positions.map((pos, posIndex) => {
+                      const x = pos.col * 100 + 50;
+                      const y = pos.row * 100 + 50;
+
+                      return (
+                        <circle
+                          key={posIndex}
+                          cx={x}
+                          cy={y}
+                          r="8"
+                          fill={color}
+                          stroke="white"
+                          strokeWidth="2"
+                          opacity="0.9"
+                        />
+                      );
+                    })}
+                  </g>
+                );
+              })}
+            </svg>
           )}
         </div>
       </div>
@@ -125,14 +206,17 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
         <div className="w-full max-w-2xl mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Missed Words</h2>
           <div className="text-gray-600 dark:text-gray-300 mb-2 text-sm">
-            (Yellow cells with numbers show the path)
+            (Lines and dots show the paths - each word has a different color)
           </div>
           <div className="word-list">
-            {unfoundSeededWords.map((word, index) => (
-              <span key={index} className="word-item" style={{ backgroundColor: '#eab308' }}>
-                {word.text}
-              </span>
-            ))}
+            {unfoundSeededWords.map((word, index) => {
+              const color = pathColors[index % pathColors.length];
+              return (
+                <span key={index} className="word-item" style={{ backgroundColor: color }}>
+                  {word.text}
+                </span>
+              );
+            })}
           </div>
         </div>
       )}
