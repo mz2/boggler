@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Grid cell styles */
+.grid-cell {
+  @apply flex items-center justify-center;
+  @apply w-full h-full;
+  @apply text-2xl font-bold;
+  @apply border-2 border-gray-300;
+  @apply bg-white;
+  @apply transition-all duration-150;
+  @apply cursor-pointer;
+  @apply select-none;
+  @apply touch-none;
+}
+
+.grid-cell:hover {
+  @apply bg-blue-50;
+  @apply border-blue-400;
+}
+
+.grid-cell.selected {
+  @apply bg-blue-500;
+  @apply text-white;
+  @apply border-blue-600;
+  @apply scale-95;
+}
+
+.grid-cell.found {
+  @apply bg-green-100;
+  @apply border-green-400;
+}
+
+/* Game container */
+.game-container {
+  @apply min-h-screen;
+  @apply flex flex-col items-center justify-center;
+  @apply p-4 sm:p-8;
+  @apply gap-6;
+}
+
+/* Grid container */
+.grid-container {
+  @apply relative;
+  @apply bg-gray-100;
+  @apply rounded-lg;
+  @apply p-2 sm:p-4;
+  @apply shadow-lg;
+}
+
+/* Word list */
+.word-list {
+  @apply flex flex-wrap gap-2;
+  @apply max-w-2xl;
+  @apply justify-center;
+}
+
+.word-item {
+  @apply px-3 py-1;
+  @apply bg-green-500 text-white;
+  @apply rounded-full;
+  @apply text-sm font-medium;
+  @apply shadow-sm;
+}
+
+/* Score board */
+.score-board {
+  @apply flex gap-6;
+  @apply text-lg font-semibold;
+}
+
+/* Timer */
+.timer {
+  @apply text-4xl font-bold;
+  @apply tabular-nums;
+}
+
+.timer.warning {
+  @apply text-red-500;
+  @apply animate-pulse;
+}
+
+/* Buttons */
+.btn {
+  @apply px-6 py-3;
+  @apply rounded-lg;
+  @apply font-semibold;
+  @apply transition-all;
+  @apply shadow-md;
+  @apply hover:shadow-lg;
+  @apply active:scale-95;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white;
+  @apply hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800;
+  @apply hover:bg-gray-300;
+}

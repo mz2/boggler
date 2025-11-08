@@ -1,25 +1,24 @@
 /**
- * Dictionary loading and validation using word-list package
+ * Dictionary loading and validation (client-side)
+ * Fetches dictionary from API endpoint
  */
-
-import wordListPath from 'word-list';
-import * as fs from 'fs';
 
 // In-memory dictionary set for fast lookups
 let dictionarySet: Set<string> | null = null;
 
 /**
- * Load dictionary from word-list package
- * Reads the word list file and stores words in a Set for O(1) lookup
+ * Load dictionary from API
+ * Fetches the word list and stores words in a Set for O(1) lookup
  */
 export async function loadDictionary(): Promise<boolean> {
   try {
-    // Read the word list file
-    const content = await fs.promises.readFile(wordListPath, 'utf-8');
+    const response = await fetch('/api/dictionary');
+    if (!response.ok) {
+      throw new Error('Failed to fetch dictionary');
+    }
 
-    // Split into words and create Set
-    const words = content.split('\n').filter((word) => word.trim().length > 0);
-    dictionarySet = new Set(words.map((word) => word.toLowerCase()));
+    const data = await response.json();
+    dictionarySet = new Set(data.words);
 
     return true;
   } catch (error) {
