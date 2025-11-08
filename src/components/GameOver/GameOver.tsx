@@ -23,22 +23,10 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
     (seededWord) => !foundWordTexts.has(seededWord.text)
   );
 
-  // Get all positions that were part of unfound seeded words with their path indices
+  // Get all positions that were part of unfound seeded words
   const missedPositions = new Set(
     unfoundSeededWords.flatMap((word) => word.positions.map((pos) => `${pos.row},${pos.col}`))
   );
-
-  // Create a map of position -> path number for unfound words
-  const positionToPathNumber = new Map<string, number>();
-  unfoundSeededWords.forEach((word) => {
-    word.positions.forEach((pos, index) => {
-      const posKey = `${pos.row},${pos.col}`;
-      // If position is part of multiple unfound words, show the first one
-      if (!positionToPathNumber.has(posKey)) {
-        positionToPathNumber.set(posKey, index + 1);
-      }
-    });
-  });
 
   const gridStyle = {
     display: 'grid',
@@ -83,37 +71,14 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
                 const posKey = `${cell.row},${cell.col}`;
                 const isFound = foundPositions.has(posKey);
                 const isMissed = missedPositions.has(posKey);
-                const pathNumber = positionToPathNumber.get(posKey);
                 return (
                   <div
                     key={`${cell.row}-${cell.col}`}
                     className={`grid-cell ${isFound ? 'found' : ''} ${isMissed ? 'missed' : ''}`}
                     data-row={cell.row}
                     data-col={cell.col}
-                    style={{ position: 'relative' }}
                   >
                     {cell.letter}
-                    {isMissed && pathNumber && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          top: '2px',
-                          right: '4px',
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold',
-                          color: '#b45309',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          borderRadius: '50%',
-                          width: '18px',
-                          height: '18px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {pathNumber}
-                      </span>
-                    )}
                   </div>
                 );
               })
