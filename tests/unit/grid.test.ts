@@ -3,29 +3,29 @@ import { generateGrid, getCellAt, areAdjacent } from '@/lib/grid';
 import type { Grid, Position } from '@/types/game';
 
 describe('generateGrid', () => {
-  it('should generate a 4x4 grid', () => {
-    const grid = generateGrid(4);
+  it('should generate a 4x4 grid', async () => {
+    const grid = await generateGrid(4);
     expect(grid.size).toBe(4);
     expect(grid.cells.length).toBe(4);
     expect(grid.cells[0].length).toBe(4);
   });
 
-  it('should generate a 9x9 grid', () => {
-    const grid = generateGrid(9);
+  it('should generate a 9x9 grid', async () => {
+    const grid = await generateGrid(9);
     expect(grid.size).toBe(9);
     expect(grid.cells.length).toBe(9);
     expect(grid.cells[0].length).toBe(9);
   });
 
-  it('should generate a 16x16 grid', () => {
-    const grid = generateGrid(16);
+  it('should generate a 16x16 grid', async () => {
+    const grid = await generateGrid(16);
     expect(grid.size).toBe(16);
     expect(grid.cells.length).toBe(16);
     expect(grid.cells[0].length).toBe(16);
   });
 
-  it('should generate cells with uppercase letters A-Z', () => {
-    const grid = generateGrid(4);
+  it('should generate cells with uppercase letters A-Z', async () => {
+    const grid = await generateGrid(4);
     for (let row = 0; row < grid.size; row++) {
       for (let col = 0; col < grid.size; col++) {
         const cell = grid.cells[row][col];
@@ -36,13 +36,13 @@ describe('generateGrid', () => {
     }
   });
 
-  it('should use letter frequency weighting', () => {
+  it('should use letter frequency weighting', async () => {
     // Generate multiple grids and verify common letters appear more often
     const letterCounts: Record<string, number> = {};
     const iterations = 100;
 
     for (let i = 0; i < iterations; i++) {
-      const grid = generateGrid(9);
+      const grid = await generateGrid(9);
       for (let row = 0; row < grid.size; row++) {
         for (let col = 0; col < grid.size; col++) {
           const letter = grid.cells[row][col].letter;
@@ -63,15 +63,15 @@ describe('generateGrid', () => {
 });
 
 describe('getCellAt', () => {
-  it('should return correct cell at position', () => {
-    const grid = generateGrid(4);
+  it('should return correct cell at position', async () => {
+    const grid = await generateGrid(4);
     const cell = getCellAt(grid, { row: 2, col: 3 });
     expect(cell.row).toBe(2);
     expect(cell.col).toBe(3);
   });
 
-  it('should throw error for invalid position', () => {
-    const grid = generateGrid(4);
+  it('should throw error for invalid position', async () => {
+    const grid = await generateGrid(4);
     expect(() => getCellAt(grid, { row: 4, col: 0 })).toThrow();
     expect(() => getCellAt(grid, { row: -1, col: 0 })).toThrow();
     expect(() => getCellAt(grid, { row: 0, col: 5 })).toThrow();

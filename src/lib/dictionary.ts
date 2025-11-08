@@ -53,3 +53,30 @@ export function getDictionarySize(): number {
   }
   return dictionarySet.size;
 }
+
+/**
+ * Get words from dictionary organized by length
+ * Used for grid generation to seed guaranteed findable words
+ */
+export function getWordsByLength(): Map<number, string[]> {
+  if (!dictionarySet) {
+    throw new Error('Dictionary not loaded. Call loadDictionary() first.');
+  }
+
+  const wordsByLength = new Map<number, string[]>();
+
+  // Organize words by length (3-9 letters for grid seeding)
+  for (const word of dictionarySet) {
+    const upperWord = word.toUpperCase();
+    const length = upperWord.length;
+
+    if (length >= 3 && length <= 9) {
+      if (!wordsByLength.has(length)) {
+        wordsByLength.set(length, []);
+      }
+      wordsByLength.get(length)!.push(upperWord);
+    }
+  }
+
+  return wordsByLength;
+}

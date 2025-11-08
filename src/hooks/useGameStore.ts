@@ -15,7 +15,7 @@ interface GameStore {
   currentSelection: LetterSelection | null;
 
   // Actions
-  startNewGame: (gridSize?: number, timerDuration?: number) => void;
+  startNewGame: (gridSize?: number, timerDuration?: number) => Promise<void>;
   startSelection: (position: Position, letter: string) => void;
   extendSelection: (position: Position, letter: string) => void;
   removeLastFromSelection: () => void;
@@ -29,17 +29,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
   session: null,
   currentSelection: null,
 
-  startNewGame: (
+  startNewGame: async (
     gridSize: number = DEFAULT_GRID_SIZE,
     timerDuration: number = DEFAULT_TIMER_DURATION
   ) => {
-    const grid = generateGrid(gridSize);
-    const session = createNewSession({ gridSize, timerDuration, grid });
+    try {
+      const grid = await generateGrid(gridSize);
+      const session = createNewSession({ gridSize, timerDuration, grid });
 
-    set({
-      session: { ...session, gameState: 'playing' },
-      currentSelection: null,
-    });
+      set({
+        session: { ...session, gameState: 'playing' },
+        currentSelection: null,
+      });
+    } catch (error) {
+      console.error('Failed to generate grid:', error);
+      throw error; // Re-throw to let UI handle the error visibly
+    }
   },
 
   startSelection: (position: Position, letter: string) => {

@@ -4,8 +4,7 @@
 
 import type { Grid, GridCell, Position } from '@/types/game';
 import { LETTER_FREQUENCIES } from '@/constants/config';
-import wordListPath from 'word-list';
-import { readFileSync } from 'fs';
+import { getWordsByLength, loadDictionary } from './dictionary';
 
 /**
  * Generate a random letter using weighted frequency distribution
@@ -33,40 +32,32 @@ function getRandomLetter(): string {
 }
 
 /**
- * Load and cache dictionary words by length
+ * Dictionary cache organized by word length
+ * Loaded from the actual dictionary on first use
  */
 let dictionaryByLength: Map<number, string[]> | null = null;
 
-function loadDictionaryByLength(): Map<number, string[]> {
+/**
+ * Get dictionary words organized by length
+ * Uses the same dictionary that validates words during gameplay
+ */
+async function getDictionaryByLength(): Promise<Map<number, string[]>> {
   if (dictionaryByLength) return dictionaryByLength;
 
-  try {
-    const content = readFileSync(wordListPath, 'utf-8');
-    const words = content
-      .split('\n')
-      .map((word) => word.trim().toUpperCase())
-      .filter((word) => word.length >= 3 && word.length <= 9);
-
-    dictionaryByLength = new Map();
-    for (let length = 3; length <= 9; length++) {
-      dictionaryByLength.set(length, words.filter((w) => w.length === length));
-    }
-
-    return dictionaryByLength;
-  } catch (error) {
-    console.error('Failed to load dictionary for grid generation:', error);
-    // Fallback to hardcoded words
-    dictionaryByLength = new Map([
-      [3, ['CAT', 'DOG', 'RUN', 'SIT', 'EAT', 'HOT', 'BIG', 'NEW', 'OLD', 'RED']],
-      [4, ['WORD', 'TIME', 'LOOK', 'MAKE', 'COME', 'LOVE', 'PLAY', 'READ', 'TALK', 'WORK']],
-      [5, ['THINK', 'SPEAK', 'HOUSE', 'WATER', 'PLANT', 'POINT', 'WORLD', 'BUILD', 'LEARN', 'WRITE']],
-      [6, ['PERSON', 'CHANGE', 'SYSTEM', 'FOLLOW', 'PARENT', 'NUMBER', 'LETTER', 'SIMPLE', 'LISTEN', 'CREATE']],
-      [7, ['PROBLEM', 'COMPANY', 'PROVIDE', 'PROGRAM', 'COUNTRY', 'MORNING', 'NOTHING', 'PICTURE', 'THROUGH', 'ANOTHER']],
-      [8, ['QUESTION', 'CHILDREN', 'REMEMBER', 'TOGETHER', 'INTEREST', 'ALTHOUGH', 'CONTINUE', 'CONSIDER', 'STRAIGHT', 'BUSINESS']],
-      [9, ['SOMETHING', 'DIFFERENT', 'IMPORTANT', 'COMMUNITY', 'EDUCATION', 'CHARACTER', 'POLITICAL', 'SOMETIMES', 'DIFFICULT', 'EXPERIENCE']],
-    ]);
-    return dictionaryByLength;
+  // Ensure dictionary is loaded
+  const success = await loadDictionary();
+  if (!success) {
+    throw new Error('Failed to load dictionary for grid generation');
   }
+
+  // Get words organized by length
+  dictionaryByLength = getWordsByLength();
+
+  if (dictionaryByLength.size === 0) {
+    throw new Error('Dictionary loaded but contains no valid words (3-9 letters)');
+  }
+
+  return dictionaryByLength;
 }
 
 /**
@@ -116,7 +107,7 @@ function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, start
  * Generate a new grid of specified size with guaranteed words
  * Seeds words of length 3-9 in decreasing frequency
  */
-export function generateGrid(size: number): Grid {
+export async function generateGrid(size: number): Promise<Grid> {
   const cells: GridCell[][] = [];
 
   // Initialize grid with random letters
@@ -143,14 +134,17 @@ export function generateGrid(size: number): Grid {
   };
 
   // Load dictionary words
-  const dictionary = loadDictionaryByLength();
+  const dictionary = await getDictionaryByLength();
 
   // Seed words into the grid (longer words first for better placement)
   for (let length = 9; length >= 3; length--) {
     const wordsToPlace = wordCounts[length];
     const wordPool = dictionary.get(length) || [];
 
-    if (wordPool.length === 0) continue;
+    if (wordPool.length === 0) {
+      console.warn(`No ${length}-letter words available in dictionary`);
+      continue;
+    }
 
     for (let i = 0; i < wordsToPlace; i++) {
       // Pick a random word from the dictionary for this length
