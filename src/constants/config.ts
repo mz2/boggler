@@ -10,8 +10,8 @@ export const GRID_SIZES: GridSize[] = [4, 9, 16];
 // Available timer durations (in seconds)
 export const TIMER_DURATIONS: TimerDuration[] = [60, 180, 300];
 
-// Minimum word length (3 letters)
-export const MIN_WORD_LENGTH = 3;
+// Minimum word length (4 letters)
+export const MIN_WORD_LENGTH = 4;
 
 // Timer warning threshold (10 seconds)
 export const TIMER_WARNING_THRESHOLD = 10;

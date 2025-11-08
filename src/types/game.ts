@@ -15,10 +15,17 @@ export interface GridCell {
   letter: string; // Single uppercase letter A-Z
 }
 
+// Seeded word (placed during grid generation)
+export interface SeededWord {
+  text: string; // The word (uppercase)
+  positions: Position[]; // Grid coordinates where it was placed
+}
+
 // Grid entity
 export interface Grid {
   size: number; // 4, 9, or 16
   cells: GridCell[][]; // 2D array of cells
+  seededWords?: SeededWord[]; // Words that were placed during generation
 }
 
 // Letter selection (ephemeral, active during drag)

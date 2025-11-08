@@ -121,7 +121,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Visual and audio feedback for accepted words
     highlightCells(currentSelection.positions);
-    playSuccessSound();
+    playSuccessSound(result.word!.length);
 
     // Trigger confetti for 5+ letter words
     if (result.word!.length >= 5) {

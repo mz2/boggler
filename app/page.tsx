@@ -12,11 +12,22 @@ export default function Home() {
   const [selectedGridSize, setSelectedGridSize] = useState(9);
   const [selectedDuration, setSelectedDuration] = useState(180);
 
-  // Load dictionary on mount
+  // Load dictionary and settings from localStorage on mount
   useEffect(() => {
     loadDictionary().then(() => {
       console.log('Dictionary loaded');
     });
+
+    // Load saved settings from localStorage
+    const savedGridSize = localStorage.getItem('boggler_gridSize');
+    const savedDuration = localStorage.getItem('boggler_timerDuration');
+
+    if (savedGridSize) {
+      setSelectedGridSize(parseInt(savedGridSize, 10));
+    }
+    if (savedDuration) {
+      setSelectedDuration(parseInt(savedDuration, 10));
+    }
   }, []);
 
   const handleNewGame = () => {
@@ -27,6 +38,10 @@ export default function Home() {
   const handleSettingsChange = (settings: { gridSize: number; timerDuration: number }) => {
     setSelectedGridSize(settings.gridSize);
     setSelectedDuration(settings.timerDuration);
+
+    // Save to localStorage
+    localStorage.setItem('boggler_gridSize', settings.gridSize.toString());
+    localStorage.setItem('boggler_timerDuration', settings.timerDuration.toString());
   };
 
   return (

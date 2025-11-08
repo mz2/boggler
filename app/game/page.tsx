@@ -12,7 +12,7 @@ import { GameOver } from '@/components/GameOver/GameOver';
 
 export default function GamePage() {
   const router = useRouter();
-  const { session, submitSelection, currentSelection } = useGameStore();
+  const { session, submitSelection, cancelSelection, currentSelection } = useGameStore();
   const { timeRemaining, isWarning } = useTimer();
 
   // Redirect to home if no session
@@ -22,22 +22,24 @@ export default function GamePage() {
     }
   }, [session, router]);
 
-  // Handle Enter key to submit
+  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && currentSelection && currentSelection.positions.length >= 3) {
+      // Enter to submit word
+      if (event.key === 'Enter' && currentSelection && currentSelection.positions.length >= 4) {
         event.preventDefault();
         submitSelection();
+      }
+      // ESC to cancel selection
+      else if (event.key === 'Escape' && currentSelection) {
+        event.preventDefault();
+        cancelSelection();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSelection, submitSelection]);
-
-  const handleNewGame = () => {
-    router.push('/');
-  };
+  }, [currentSelection, submitSelection, cancelSelection]);
 
   // Show loading or redirect while waiting
   if (!session) {
@@ -46,7 +48,7 @@ export default function GamePage() {
 
   // Show game over screen
   if (session.gameState === 'gameover') {
-    return <GameOver score={session.score} foundWords={session.foundWords} onNewGame={handleNewGame} />;
+    return <GameOver score={session.score} foundWords={session.foundWords} grid={session.grid} />;
   }
 
   return (
@@ -61,8 +63,8 @@ export default function GamePage() {
         <button
           onClick={() => submitSelection()}
           className="btn btn-primary"
-          disabled={!currentSelection || currentSelection.positions.length < 3}
-          title="Submit word (Enter)"
+          disabled={!currentSelection || currentSelection.positions.length < 4}
+          title="Submit word (Enter) | Cancel selection (ESC)"
         >
           Submit
         </button>
@@ -73,11 +75,6 @@ export default function GamePage() {
 
       {/* Found words */}
       <WordList words={session.foundWords} />
-
-      {/* New game button */}
-      <button onClick={handleNewGame} className="btn btn-secondary mt-4">
-        New Game
-      </button>
     </div>
   );
 }

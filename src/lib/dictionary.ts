@@ -65,12 +65,12 @@ export function getWordsByLength(): Map<number, string[]> {
 
   const wordsByLength = new Map<number, string[]>();
 
-  // Organize words by length (3-9 letters for grid seeding)
+  // Organize words by length (4-9 letters for grid seeding)
   for (const word of dictionarySet) {
     const upperWord = word.toUpperCase();
     const length = upperWord.length;
 
-    if (length >= 3 && length <= 9) {
+    if (length >= 4 && length <= 9) {
       if (!wordsByLength.has(length)) {
         wordsByLength.set(length, []);
       }

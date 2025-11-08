@@ -2,7 +2,7 @@
  * Grid generation and utility functions
  */
 
-import type { Grid, GridCell, Position } from '@/types/game';
+import type { Grid, GridCell, Position, SeededWord } from '@/types/game';
 import { LETTER_FREQUENCIES } from '@/constants/config';
 import { getWordsByLength, loadDictionary } from './dictionary';
 
@@ -85,9 +85,10 @@ function getAdjacentPositions(pos: Position, size: number): Position[] {
 /**
  * Try to place a word in the grid starting from a position using zigzag pattern
  * Uses backtracking to explore all possible paths through adjacent cells
+ * Returns the path if successful, null otherwise
  */
-function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, startCol: number, size: number): boolean {
-  if (startRow >= size || startCol >= size) return false;
+function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, startCol: number, size: number): Position[] | null {
+  if (startRow >= size || startCol >= size) return null;
 
   const path: Position[] = [];
   const used = new Set<string>();
@@ -134,10 +135,10 @@ function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, start
     for (let i = 0; i < path.length; i++) {
       cells[path[i].row][path[i].col].letter = word[i];
     }
-    return true;
+    return [...path]; // Return a copy of the path
   }
 
-  return false;
+  return null;
 }
 
 /**
@@ -161,7 +162,6 @@ export async function generateGrid(size: number): Promise<Grid> {
 
   // Determine how many words to seed based on grid size
   const wordCounts: Record<number, number> = {
-    3: Math.max(1, Math.floor(size / 4)),  // Fewer 3-letter words
     4: Math.ceil(size / 2),                // More 4-letter words
     5: Math.ceil(size / 2),                // More 5-letter words
     6: Math.ceil(size / 3),
@@ -174,7 +174,7 @@ export async function generateGrid(size: number): Promise<Grid> {
   const dictionary = await getDictionaryByLength();
 
   // Seed words into the grid (longer words first for better placement)
-  for (let length = 9; length >= 3; length--) {
+  for (let length = 9; length >= 4; length--) {
     const wordsToPlace = wordCounts[length];
     const wordPool = dictionary.get(length) || [];
 
