@@ -2,6 +2,7 @@
  * GameOver component - displays final score, found words, and grid with highlights
  */
 
+import { useState } from 'react';
 import type { FoundWord, Grid } from '@/types/game';
 
 interface GameOverProps {
@@ -12,6 +13,7 @@ interface GameOverProps {
 }
 
 export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) {
+  const [selectedMissedWordIndex, setSelectedMissedWordIndex] = useState<number | null>(null);
   // Get all positions that were part of found words
   const foundPositions = new Set(
     foundWords.flatMap((word) => word.positions.map((pos) => `${pos.row},${pos.col}`))
@@ -23,10 +25,13 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
     (seededWord) => !foundWordTexts.has(seededWord.text)
   );
 
-  // Get all positions that were part of unfound seeded words
-  const missedPositions = new Set(
-    unfoundSeededWords.flatMap((word) => word.positions.map((pos) => `${pos.row},${pos.col}`))
-  );
+  // Get positions for the selected missed word only
+  const missedPositions = new Set<string>();
+  if (selectedMissedWordIndex !== null && unfoundSeededWords[selectedMissedWordIndex]) {
+    unfoundSeededWords[selectedMissedWordIndex].positions.forEach((pos) => {
+      missedPositions.add(`${pos.row},${pos.col}`);
+    });
+  }
 
   const gridStyle = {
     display: 'grid',
@@ -35,7 +40,7 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
     gap: '0.25rem',
     aspectRatio: '1',
     width: '100%',
-    maxWidth: '600px',
+    maxWidth: '400px',
     margin: '0 auto',
   };
 
@@ -86,7 +91,7 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
           </div>
 
           {/* SVG overlay for drawing paths */}
-          {unfoundSeededWords.length > 0 && (
+          {unfoundSeededWords.length > 0 && selectedMissedWordIndex !== null && (
             <svg
               style={{
                 position: 'absolute',
@@ -98,10 +103,11 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
               }}
               viewBox={`0 0 ${grid.size * 100} ${grid.size * 100}`}
             >
-              {unfoundSeededWords.map((word, wordIndex) => {
-                const color = pathColors[wordIndex % pathColors.length];
+              {(() => {
+                const word = unfoundSeededWords[selectedMissedWordIndex];
+                const color = pathColors[selectedMissedWordIndex % pathColors.length];
                 return (
-                  <g key={wordIndex}>
+                  <g>
                     {/* Draw lines connecting positions */}
                     {word.positions.map((pos, posIndex) => {
                       if (posIndex === word.positions.length - 1) return null;
@@ -148,7 +154,7 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
                     })}
                   </g>
                 );
-              })}
+              })()}
             </svg>
           )}
         </div>
@@ -171,15 +177,27 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
         <div className="w-full max-w-2xl mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Missed Words</h2>
           <div className="text-gray-600 dark:text-gray-300 mb-2 text-sm">
-            (Lines and dots show the paths - each word has a different color)
+            (Click a word to see its path on the grid)
           </div>
           <div className="word-list">
             {unfoundSeededWords.map((word, index) => {
               const color = pathColors[index % pathColors.length];
+              const isSelected = selectedMissedWordIndex === index;
               return (
-                <span key={index} className="word-item" style={{ backgroundColor: color }}>
+                <button
+                  key={index}
+                  onClick={() => setSelectedMissedWordIndex(isSelected ? null : index)}
+                  className="word-item"
+                  style={{
+                    backgroundColor: color,
+                    cursor: 'pointer',
+                    opacity: isSelected ? 1 : 0.7,
+                    transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                    border: isSelected ? '3px solid white' : 'none',
+                  }}
+                >
                   {word.text}
-                </span>
+                </button>
               );
             })}
           </div>
