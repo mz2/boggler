@@ -48,16 +48,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 [P] Create TypeScript type definitions in src/types/game.ts (Position, GridCell, Grid, LetterSelection, FoundWord, GameSession, GameTimer, GameState, GridSize, TimerDuration, GameSettings)
-- [ ] T009 [P] Define constants in src/constants/config.ts (GRID_SIZES, TIMER_DURATIONS, MIN_WORD_LENGTH, TIMER_WARNING_THRESHOLD, LETTER_FREQUENCIES)
-- [ ] T010 Write tests for Fibonacci scoring in tests/unit/scoring.test.ts
-- [ ] T011 Implement Fibonacci scoring logic in src/lib/scoring.ts (calculateScore, fibonacci functions)
-- [ ] T012 Write tests for dictionary loading in tests/unit/dictionary.test.ts
-- [ ] T013 Implement dictionary loading from word-list package in src/lib/dictionary.ts (loadDictionary, isValidWord functions)
-- [ ] T014 Write tests for grid generation in tests/unit/grid.test.ts
-- [ ] T015 Implement grid generation with letter frequency weighting in src/lib/grid.ts (generateGrid, getCellAt, areAdjacent functions)
-- [ ] T016 Write tests for word validation in tests/unit/validation.test.ts
-- [ ] T017 Implement word validation and adjacency checking in src/lib/validation.ts (isValidPath, validateWordSubmission, hasMinimumViableWords functions)
+- [X] T008 [P] Create TypeScript type definitions in src/types/game.ts (Position, GridCell, Grid, LetterSelection, FoundWord, GameSession, GameTimer, GameState, GridSize, TimerDuration, GameSettings)
+- [X] T009 [P] Define constants in src/constants/config.ts (GRID_SIZES, TIMER_DURATIONS, MIN_WORD_LENGTH, TIMER_WARNING_THRESHOLD, LETTER_FREQUENCIES)
+- [X] T010 Write tests for Fibonacci scoring in tests/unit/scoring.test.ts
+- [X] T011 Implement Fibonacci scoring logic in src/lib/scoring.ts (calculateScore, fibonacci functions)
+- [X] T012 Write tests for dictionary loading in tests/unit/dictionary.test.ts
+- [X] T013 Implement dictionary loading from word-list package in src/lib/dictionary.ts (loadDictionary, isValidWord functions)
+- [X] T014 Write tests for grid generation in tests/unit/grid.test.ts
+- [X] T015 Implement grid generation with letter frequency weighting in src/lib/grid.ts (generateGrid, getCellAt, areAdjacent functions)
+- [X] T016 Write tests for word validation in tests/unit/validation.test.ts
+- [X] T017 Implement word validation and adjacency checking in src/lib/validation.ts (isValidPath, validateWordSubmission, hasMinimumViableWords functions)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
