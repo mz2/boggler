@@ -39,7 +39,7 @@ export default function Home() {
 
   const handleNewGame = () => {
     startNewGame(selectedGridSize, selectedDuration, selectedLanguage);
-    router.push('/game');
+    router.push(`/game/${selectedLanguage}/${selectedGridSize}/${selectedDuration}`);
   };
 
   const handleSettingsChange = (settings: { gridSize: number; timerDuration: number; language: Language }) => {
