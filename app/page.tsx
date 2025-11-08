@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameStore } from '@/hooks/useGameStore';
 import { useTimer } from '@/hooks/useTimer';
 import { Grid } from '@/components/Grid/Grid';
 import { Timer } from '@/components/GameControls/Timer';
 import { GameOver } from '@/components/GameOver/GameOver';
 import { loadDictionary } from '@/lib/dictionary';
+import { TIMER_DURATIONS } from '@/constants/config';
 
 export default function Home() {
   const { session, startNewGame, submitSelection, cancelSelection, currentSelection } =
     useGameStore();
   const { timeRemaining, isWarning } = useTimer();
+  const [selectedDuration, setSelectedDuration] = useState(30);
 
   // Load dictionary on mount
   useEffect(() => {
@@ -21,7 +23,7 @@ export default function Home() {
   }, []);
 
   const handleNewGame = () => {
-    startNewGame();
+    startNewGame(undefined, selectedDuration);
   };
 
   // Show game over screen
@@ -36,8 +38,26 @@ export default function Home() {
         <p className="text-lg text-gray-600 mb-8">
           Find as many words as you can by connecting adjacent letters!
         </p>
+
+        <div className="flex items-center gap-4 mb-4">
+          <label htmlFor="timer-duration" className="text-lg font-medium">
+            Timer:
+          </label>
+          <select
+            id="timer-duration"
+            value={selectedDuration}
+            onChange={(e) => setSelectedDuration(Number(e.target.value))}
+            className="px-4 py-2 border-2 border-gray-300 rounded-lg font-medium focus:outline-none focus:border-blue-500"
+          >
+            <option value={30}>30 seconds</option>
+            <option value={60}>1 minute</option>
+            <option value={180}>3 minutes</option>
+            <option value={300}>5 minutes</option>
+          </select>
+        </div>
+
         <button onClick={handleNewGame} className="btn btn-primary">
-          Start New Game
+          New Game
         </button>
       </div>
     );
@@ -97,10 +117,28 @@ export default function Home() {
         </div>
       )}
 
-      {/* New game button */}
-      <button onClick={handleNewGame} className="btn btn-secondary mt-4">
-        New Game
-      </button>
+      {/* New game button with timer selector */}
+      <div className="flex flex-col items-center gap-3 mt-4">
+        <div className="flex items-center gap-4">
+          <label htmlFor="timer-duration-ingame" className="text-sm font-medium">
+            Timer:
+          </label>
+          <select
+            id="timer-duration-ingame"
+            value={selectedDuration}
+            onChange={(e) => setSelectedDuration(Number(e.target.value))}
+            className="px-3 py-1 border-2 border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:border-blue-500"
+          >
+            <option value={30}>30 seconds</option>
+            <option value={60}>1 minute</option>
+            <option value={180}>3 minutes</option>
+            <option value={300}>5 minutes</option>
+          </select>
+        </div>
+        <button onClick={handleNewGame} className="btn btn-secondary">
+          New Game
+        </button>
+      </div>
     </div>
   );
 }
