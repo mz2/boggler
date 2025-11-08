@@ -36,17 +36,63 @@ export function Grid({ grid }: GridProps) {
 
   return (
     <div className="grid-container">
-      <div style={gridStyle}>
-        {grid.cells.map((row, rowIndex) =>
-          row.map((cell) => (
-            <GridCell
-              key={`${cell.row}-${cell.col}`}
-              cell={cell}
-              isSelected={isPositionSelected(cell.row, cell.col)}
-              isFound={isPositionInFoundWord(cell.row, cell.col)}
-              onClick={() => handleCellClick({ row: cell.row, col: cell.col }, cell.letter)}
-            />
-          ))
+      <div style={{ position: 'relative' }}>
+        <div style={gridStyle}>
+          {grid.cells.map((row, rowIndex) =>
+            row.map((cell) => (
+              <GridCell
+                key={`${cell.row}-${cell.col}`}
+                cell={cell}
+                isSelected={isPositionSelected(cell.row, cell.col)}
+                isFound={isPositionInFoundWord(cell.row, cell.col)}
+                onClick={() => handleCellClick({ row: cell.row, col: cell.col }, cell.letter)}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Path visualization overlay */}
+        {currentSelection && currentSelection.positions.length > 1 && (
+          <svg
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              pointerEvents: 'none',
+            }}
+            viewBox={`0 0 ${grid.size} ${grid.size}`}
+          >
+            {/* Draw lines between positions */}
+            {currentSelection.positions.map((pos, index) => {
+              if (index === 0) return null;
+              const prevPos = currentSelection.positions[index - 1];
+              return (
+                <line
+                  key={`line-${index}`}
+                  x1={prevPos.col + 0.5}
+                  y1={prevPos.row + 0.5}
+                  x2={pos.col + 0.5}
+                  y2={pos.row + 0.5}
+                  stroke="#3b82f6"
+                  strokeWidth="0.15"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+
+            {/* Draw dots at each position */}
+            {currentSelection.positions.map((pos, index) => (
+              <circle
+                key={`dot-${index}`}
+                cx={pos.col + 0.5}
+                cy={pos.row + 0.5}
+                r="0.2"
+                fill="#3b82f6"
+              />
+            ))}
+          </svg>
         )}
       </div>
 
