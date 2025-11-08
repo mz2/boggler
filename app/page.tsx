@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/hooks/useGameStore';
 import { GameSettings } from '@/components/GameControls/GameSettings';
+import { LogoIcon } from '@/components/LogoIcon/LogoIcon';
 import { loadDictionary } from '@/lib/dictionary';
 import type { Language } from '@/types/game';
 
@@ -64,7 +65,8 @@ export default function Home() {
 
   return (
     <div className="game-container">
-      <h1 className="text-5xl font-bold mb-6">Boggler</h1>
+      <LogoIcon size={160} />
+      <h1 className="text-5xl font-bold mb-6 mt-6">Boggler</h1>
       <p className="text-lg mb-8 opacity-90">
         Find as many words as you can by connecting adjacent letters!
       </p>
