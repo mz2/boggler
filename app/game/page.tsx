@@ -12,8 +12,17 @@ import { GameOver } from '@/components/GameOver/GameOver';
 
 export default function GamePage() {
   const router = useRouter();
-  const { session, submitSelection, cancelSelection, currentSelection } = useGameStore();
+  const { session, submitSelection, cancelSelection, currentSelection, startNewGame } = useGameStore();
   const { timeRemaining, isWarning } = useTimer();
+
+  // Handler for starting a new game
+  const handleNewGame = async () => {
+    try {
+      await startNewGame();
+    } catch (error) {
+      console.error('Failed to start new game:', error);
+    }
+  };
 
   // Redirect to home if no session
   useEffect(() => {
@@ -48,7 +57,7 @@ export default function GamePage() {
 
   // Show game over screen
   if (session.gameState === 'gameover') {
-    return <GameOver score={session.score} foundWords={session.foundWords} grid={session.grid} />;
+    return <GameOver score={session.score} foundWords={session.foundWords} grid={session.grid} onNewGame={handleNewGame} />;
   }
 
   return (

@@ -143,10 +143,11 @@ function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, start
 
 /**
  * Generate a new grid of specified size with guaranteed words
- * Seeds words of length 3-9 in decreasing frequency
+ * Seeds words of length 4-9 in decreasing frequency
  */
 export async function generateGrid(size: number): Promise<Grid> {
   const cells: GridCell[][] = [];
+  const seededWords: SeededWord[] = [];
 
   // Initialize grid with random letters
   for (let row = 0; row < size; row++) {
@@ -193,7 +194,13 @@ export async function generateGrid(size: number): Promise<Grid> {
         const startRow = Math.floor(Math.random() * size);
         const startCol = Math.floor(Math.random() * size);
 
-        if (tryPlaceWord(cells, word, startRow, startCol, size)) {
+        const placedPath = tryPlaceWord(cells, word, startRow, startCol, size);
+        if (placedPath) {
+          // Track the seeded word
+          seededWords.push({
+            text: word,
+            positions: placedPath,
+          });
           break; // Successfully placed
         }
       }
@@ -203,6 +210,7 @@ export async function generateGrid(size: number): Promise<Grid> {
   return {
     size,
     cells,
+    seededWords,
   };
 }
 

@@ -57,6 +57,12 @@ body {
   @apply text-blue-400;
 }
 
+.grid-cell.missed {
+  @apply bg-yellow-100;
+  @apply border-yellow-400;
+  @apply text-gray-900;
+}
+
 .grid-cell.cell-success {
   background-color: rgb(191 219 254) !important;
   color: rgb(17 24 39) !important;
