@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getWordsList } from 'most-common-words-by-language';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
 // Cache dictionaries by language
 const dictionaryCache = new Map<string, string[]>();
@@ -23,15 +24,23 @@ export async function GET(request: Request) {
 
     // Check cache
     if (!dictionaryCache.has(language)) {
-      // Get 10,000 most common words for this language
-      const words = getWordsList(language, 10000);
+      // Read the word file directly
+      const wordFilePath = join(
+        process.cwd(),
+        'node_modules/most-common-words-by-language/build/resources',
+        `${language}.txt`
+      );
+      const content = await readFile(wordFilePath, 'utf-8');
 
-      // Filter to 4-9 letters and convert to lowercase
-      const filteredWords = words
+      // Parse and filter words
+      const words = content
+        .split('\n')
+        .map((line) => line.trim())
         .filter((word) => word.length >= 4 && word.length <= 9)
-        .map((word) => word.toLowerCase());
+        .map((word) => word.toLowerCase())
+        .slice(0, 10000); // Take first 10,000 words
 
-      dictionaryCache.set(language, filteredWords);
+      dictionaryCache.set(language, words);
     }
 
     return NextResponse.json({
