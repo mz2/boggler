@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { Grid as GridType } from '@/types/game';
 import { GridCell } from './GridCell';
 import { useWordSelection } from '@/hooks/useWordSelection';
@@ -13,6 +14,7 @@ interface GridProps {
 export function Grid({ grid, debugMode = false }: GridProps) {
   const { currentSelection } = useGameStore();
   const { handleCellClick } = useWordSelection();
+  const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
 
   // Color palette for debug mode - same as GameOver
   const pathColors = [
@@ -59,8 +61,8 @@ export function Grid({ grid, debugMode = false }: GridProps) {
           )}
         </div>
 
-        {/* Debug mode: Show all seeded words with paths */}
-        {debugMode && grid.seededWords && grid.seededWords.length > 0 && (
+        {/* Debug mode: Show hovered word path */}
+        {debugMode && grid.seededWords && grid.seededWords.length > 0 && hoveredWordIndex !== null && (
           <svg
             style={{
               position: 'absolute',
@@ -72,10 +74,11 @@ export function Grid({ grid, debugMode = false }: GridProps) {
             }}
             viewBox={`0 0 ${grid.size * 100} ${grid.size * 100}`}
           >
-            {grid.seededWords.map((word, wordIndex) => {
-              const color = pathColors[wordIndex % pathColors.length];
+            {(() => {
+              const word = grid.seededWords[hoveredWordIndex];
+              const color = pathColors[hoveredWordIndex % pathColors.length];
               return (
-                <g key={wordIndex}>
+                <g>
                   {/* Draw lines connecting positions */}
                   {word.positions.map((pos, posIndex) => {
                     if (posIndex === word.positions.length - 1) return null;
@@ -94,9 +97,9 @@ export function Grid({ grid, debugMode = false }: GridProps) {
                         x2={x2}
                         y2={y2}
                         stroke={color}
-                        strokeWidth="3"
+                        strokeWidth="4"
                         strokeLinecap="round"
-                        opacity="0.6"
+                        opacity="0.8"
                       />
                     );
                   })}
@@ -111,17 +114,17 @@ export function Grid({ grid, debugMode = false }: GridProps) {
                         key={posIndex}
                         cx={x}
                         cy={y}
-                        r="6"
+                        r="8"
                         fill={color}
                         stroke="white"
-                        strokeWidth="1.5"
-                        opacity="0.7"
+                        strokeWidth="2"
+                        opacity="0.9"
                       />
                     );
                   })}
                 </g>
               );
-            })}
+            })()}
           </svg>
         )}
       </div>
@@ -137,19 +140,27 @@ export function Grid({ grid, debugMode = false }: GridProps) {
       {debugMode && grid.seededWords && grid.seededWords.length > 0 && (
         <div className="mt-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            Debug: Seeded Words ({grid.seededWords.length})
+            Debug: Seeded Words ({grid.seededWords.length}) - Hover to highlight
           </p>
           <div className="flex flex-wrap gap-2 justify-center">
             {grid.seededWords.map((word, index) => {
               const color = pathColors[index % pathColors.length];
+              const isHovered = hoveredWordIndex === index;
               return (
-                <span
+                <button
                   key={index}
-                  className="px-3 py-1 rounded-full text-white text-sm font-semibold"
-                  style={{ backgroundColor: color }}
+                  onMouseEnter={() => setHoveredWordIndex(index)}
+                  onMouseLeave={() => setHoveredWordIndex(null)}
+                  className="px-3 py-1 rounded-full text-white text-sm font-semibold transition-all"
+                  style={{
+                    backgroundColor: color,
+                    opacity: isHovered ? 1 : 0.7,
+                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                    cursor: 'pointer',
+                  }}
                 >
                   {word.text}
-                </span>
+                </button>
               );
             })}
           </div>
