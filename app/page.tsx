@@ -38,8 +38,10 @@ export default function Home() {
   }, []);
 
   const handleNewGame = () => {
-    startNewGame(selectedGridSize, selectedDuration, selectedLanguage);
-    router.push(`/game/${selectedLanguage}/${selectedGridSize}x${selectedGridSize}/${selectedDuration}s`);
+    // Generate a random seed for the game
+    const seed = Math.floor(Date.now() * Math.random()) % 2147483647;
+    startNewGame(selectedGridSize, selectedDuration, selectedLanguage, seed);
+    router.push(`/game/${selectedLanguage}/${selectedGridSize}x${selectedGridSize}/${selectedDuration}s/${seed}`);
   };
 
   const handleSettingsChange = (settings: { gridSize: number; timerDuration: number; language: Language }) => {

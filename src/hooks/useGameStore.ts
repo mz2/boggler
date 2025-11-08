@@ -18,7 +18,7 @@ interface GameStore {
   currentSelection: LetterSelection | null;
 
   // Actions
-  startNewGame: (gridSize?: number, timerDuration?: number, language?: Language) => Promise<void>;
+  startNewGame: (gridSize?: number, timerDuration?: number, language?: Language, seed?: number) => Promise<void>;
   startSelection: (position: Position, letter: string) => void;
   extendSelection: (position: Position, letter: string) => void;
   removeLastFromSelection: () => void;
@@ -35,11 +35,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
   startNewGame: async (
     gridSize: number = DEFAULT_GRID_SIZE,
     timerDuration: number = DEFAULT_TIMER_DURATION,
-    language: Language = 'english'
+    language: Language = 'english',
+    seed?: number
   ) => {
     try {
-      const grid = await generateGrid(gridSize, language);
-      const session = createNewSession({ gridSize, timerDuration, language, grid });
+      // Generate a new seed if not provided
+      const gameSeed = seed ?? Math.floor(Date.now() * Math.random()) % 2147483647;
+
+      const grid = await generateGrid(gridSize, language, gameSeed);
+      const session = createNewSession({ gridSize, timerDuration, language, grid, seed: gameSeed });
 
       set({
         session: { ...session, gameState: 'playing' },

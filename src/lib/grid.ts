@@ -5,11 +5,12 @@
 import type { Grid, GridCell, Position, SeededWord, Language } from '@/types/game';
 import { LETTER_FREQUENCIES } from '@/constants/config';
 import { getWordsByLength, loadDictionary } from './dictionary';
+import { SeededRandom } from './random';
 
 /**
  * Generate a random letter using weighted frequency distribution
  */
-function getRandomLetter(): string {
+function getRandomLetter(rng: SeededRandom): string {
   const letters = Object.keys(LETTER_FREQUENCIES);
   const weights = Object.values(LETTER_FREQUENCIES);
 
@@ -17,7 +18,7 @@ function getRandomLetter(): string {
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
 
   // Generate random number between 0 and totalWeight
-  let random = Math.random() * totalWeight;
+  let random = rng.next() * totalWeight;
 
   // Select letter based on cumulative weights
   for (let i = 0; i < letters.length; i++) {
@@ -96,7 +97,8 @@ function tryPlaceWord(
   startRow: number,
   startCol: number,
   size: number,
-  occupiedCells: Set<string>
+  occupiedCells: Set<string>,
+  rng: SeededRandom
 ): Position[] | null {
   if (startRow >= size || startCol >= size) return null;
 
@@ -118,7 +120,7 @@ function tryPlaceWord(
     const adjacentPositions = getAdjacentPositions(currentPos, size);
 
     // Shuffle adjacent positions for variety
-    const shuffled = adjacentPositions.sort(() => Math.random() - 0.5);
+    const shuffled = rng.shuffle(adjacentPositions);
 
     for (const nextPos of shuffled) {
       const nextPosKey = `${nextPos.row},${nextPos.col}`;
@@ -183,7 +185,12 @@ function tryPlaceWord(
  * Generate a new grid of specified size with guaranteed words
  * Seeds words of length 4-9 in decreasing frequency
  */
-export async function generateGrid(size: number, language: Language = 'english'): Promise<Grid> {
+export async function generateGrid(
+  size: number,
+  language: Language = 'english',
+  seed: number
+): Promise<Grid> {
+  const rng = new SeededRandom(seed);
   const cells: GridCell[][] = [];
   const seededWords: SeededWord[] = [];
   const occupiedCells = new Set<string>(); // Track cells used by seeded words
@@ -195,7 +202,7 @@ export async function generateGrid(size: number, language: Language = 'english')
       cells[row][col] = {
         row,
         col,
-        letter: getRandomLetter(),
+        letter: getRandomLetter(rng),
       };
     }
   }
@@ -225,7 +232,7 @@ export async function generateGrid(size: number, language: Language = 'english')
 
     for (let i = 0; i < wordsToPlace; i++) {
       // Pick a random word from the dictionary for this length
-      const word = wordPool[Math.floor(Math.random() * wordPool.length)];
+      const word = wordPool[rng.nextInt(0, wordPool.length)];
       let placedPath: Position[] | null = null;
 
       // First, try to place starting from overlap positions with existing words
@@ -248,12 +255,12 @@ export async function generateGrid(size: number, language: Language = 'english')
         }
 
         // Shuffle overlap candidates for variety
-        overlapCandidates.sort(() => Math.random() - 0.5);
+        const shuffledCandidates = rng.shuffle(overlapCandidates);
 
         // Try placing from each overlap candidate
-        for (const overlapPos of overlapCandidates.slice(0, 5)) {
+        for (const overlapPos of shuffledCandidates.slice(0, 5)) {
           // Try first 5
-          placedPath = tryPlaceWord(cells, word, overlapPos.row, overlapPos.col, size, occupiedCells);
+          placedPath = tryPlaceWord(cells, word, overlapPos.row, overlapPos.col, size, occupiedCells, rng);
           if (placedPath) break;
         }
       }
@@ -262,10 +269,10 @@ export async function generateGrid(size: number, language: Language = 'english')
       if (!placedPath) {
         const maxAttempts = 10;
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
-          const startRow = Math.floor(Math.random() * size);
-          const startCol = Math.floor(Math.random() * size);
+          const startRow = rng.nextInt(0, size);
+          const startCol = rng.nextInt(0, size);
 
-          placedPath = tryPlaceWord(cells, word, startRow, startCol, size, occupiedCells);
+          placedPath = tryPlaceWord(cells, word, startRow, startCol, size, occupiedCells, rng);
           if (placedPath) break;
         }
       }

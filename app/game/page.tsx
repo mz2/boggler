@@ -11,7 +11,9 @@ function GamePageContent() {
   // Redirect to the new URL structure with default settings
   useEffect(() => {
     const debugQuery = debugParam ? `?debug=${debugParam}` : '';
-    router.push(`/game/english/9x9/180s${debugQuery}`);
+    // Generate a random seed for the redirect
+    const seed = Math.floor(Date.now() * Math.random()) % 2147483647;
+    router.push(`/game/english/9x9/180s/${seed}${debugQuery}`);
   }, [router, debugParam]);
 
   return (

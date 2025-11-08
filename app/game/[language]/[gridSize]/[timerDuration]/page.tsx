@@ -1,137 +1,30 @@
 'use client';
 
-import { useEffect, Suspense, useRef } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams, useParams } from 'next/navigation';
-import { useGameStore } from '@/hooks/useGameStore';
-import { useTimer } from '@/hooks/useTimer';
-import { Grid } from '@/components/Grid/Grid';
-import { Timer } from '@/components/GameControls/Timer';
-import { ScoreBoard } from '@/components/GameControls/ScoreBoard';
-import { WordList } from '@/components/WordList/WordList';
-import { GameOver } from '@/components/GameOver/GameOver';
 import type { Language } from '@/types/game';
 
 function GamePageContent() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  const debugMode = searchParams.get('debug') === 'true';
+  const debugParam = searchParams.get('debug');
 
-  const language = (params.language as Language) || 'english';
-
-  // Parse grid size from "NxN" format (e.g., "9x9" -> 9)
-  const gridSizeParam = params.gridSize as string;
-  const gridSizeMatch = gridSizeParam?.match(/^(\d+)x\1$/);
-  const gridSize = gridSizeMatch ? parseInt(gridSizeMatch[1], 10) : 9;
-
-  // Parse timer duration from "Ns" format (e.g., "180s" -> 180)
-  const timerParam = params.timerDuration as string;
-  const timerMatch = timerParam?.match(/^(\d+)s$/);
-  const timerDuration = timerMatch ? parseInt(timerMatch[1], 10) : 180;
-
-  const { session, submitSelection, cancelSelection, currentSelection, startNewGame } = useGameStore();
-  const { timeRemaining, isWarning } = useTimer();
-  const isCreatingGame = useRef(false);
-
-  // Validate parameters
+  // Redirect to the new URL structure with seed parameter
   useEffect(() => {
-    const validLanguages: Language[] = ['english', 'finnish'];
-    const validGridSizes = [4, 9, 16];
-    const validTimerDurations = [30, 60, 180, 300];
+    const language = (params.language as Language) || 'english';
+    const gridSizeParam = params.gridSize as string;
+    const timerParam = params.timerDuration as string;
+    const debugQuery = debugParam ? `?debug=${debugParam}` : '';
 
-    if (!validLanguages.includes(language) ||
-        !validGridSizes.includes(gridSize) ||
-        !validTimerDurations.includes(timerDuration) ||
-        !gridSizeMatch ||
-        !timerMatch) {
-      router.push('/game/english/9x9/180s');
-    }
-  }, [language, gridSize, timerDuration, gridSizeMatch, timerMatch, router]);
-
-  // Handler for starting a new game
-  const handleNewGame = async () => {
-    try {
-      isCreatingGame.current = true;
-      await startNewGame(gridSize, timerDuration, language);
-      isCreatingGame.current = false;
-    } catch (error) {
-      console.error('Failed to start new game:', error);
-      isCreatingGame.current = false;
-    }
-  };
-
-  // Redirect to home if no session (unless debug mode or creating a new game)
-  useEffect(() => {
-    if (!session && !isCreatingGame.current) {
-      if (debugMode) {
-        // Auto-start a game in debug mode with URL parameters
-        handleNewGame();
-      } else {
-        router.push('/');
-      }
-    }
-  }, [session, router, debugMode]);
-
-  // Handle keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Enter to submit word
-      if (event.key === 'Enter' && currentSelection && currentSelection.positions.length >= 4) {
-        event.preventDefault();
-        submitSelection();
-      }
-      // ESC to cancel selection
-      else if (event.key === 'Escape' && currentSelection) {
-        event.preventDefault();
-        cancelSelection();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSelection, submitSelection, cancelSelection]);
-
-  // Show loading or redirect while waiting
-  if (!session) {
-    return null;
-  }
-
-  // Show game over screen
-  if (session.gameState === 'gameover') {
-    return <GameOver score={session.score} foundWords={session.foundWords} grid={session.grid} onNewGame={handleNewGame} />;
-  }
+    // Generate a random seed for the redirect
+    const seed = Math.floor(Date.now() * Math.random()) % 2147483647;
+    router.push(`/game/${language}/${gridSizeParam}/${timerParam}/${seed}${debugQuery}`);
+  }, [router, params, debugParam]);
 
   return (
     <div className="game-container">
-      {/* Grid */}
-      <div className="w-full max-w-[600px]">
-        {/* Score, Timer, and Submit button */}
-        <div className="grid grid-cols-3 items-center w-full gap-4 mb-4">
-          <div className="justify-self-start">
-            <ScoreBoard score={session.score} wordCount={session.foundWords.length} />
-          </div>
-
-          <div className="justify-self-center">
-            <Timer timeRemaining={timeRemaining} isWarning={isWarning} />
-          </div>
-
-          <div className="justify-self-end">
-            <button
-              onClick={() => submitSelection()}
-              className="btn btn-primary"
-              disabled={!currentSelection || currentSelection.positions.length < 4}
-              title="Submit word (Enter) | Cancel selection (ESC)"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-
-        <Grid grid={session.grid} debugMode={debugMode} />
-      </div>
-
-      {/* Found words */}
-      <WordList words={session.foundWords} />
+      <p>Redirecting...</p>
     </div>
   );
 }

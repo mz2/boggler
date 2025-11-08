@@ -84,6 +84,7 @@ export interface GameSession {
   foundWords: FoundWord[];
   gameState: GameState;
   language: Language;
+  seed: number; // Random seed for deterministic grid generation
   createdAt: Date;
   endedAt: Date | null;
 }

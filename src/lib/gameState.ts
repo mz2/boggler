@@ -12,13 +12,14 @@ export interface CreateSessionOptions {
   timerDuration?: number;
   language?: Language;
   grid: Grid;
+  seed: number;
 }
 
 /**
  * Create a new game session
  */
 export function createNewSession(options: CreateSessionOptions): GameSession {
-  const { gridSize = DEFAULT_GRID_SIZE, timerDuration = DEFAULT_TIMER_DURATION, language = 'english', grid } = options;
+  const { gridSize = DEFAULT_GRID_SIZE, timerDuration = DEFAULT_TIMER_DURATION, language = 'english', grid, seed } = options;
 
   return {
     id: uuidv4(),
@@ -30,6 +31,7 @@ export function createNewSession(options: CreateSessionOptions): GameSession {
     foundWords: [],
     gameState: 'setup',
     language,
+    seed,
     createdAt: new Date(),
     endedAt: null,
   };
