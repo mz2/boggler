@@ -2,12 +2,16 @@
 
 import { useEffect } from 'react';
 import { useGameStore } from '@/hooks/useGameStore';
+import { useTimer } from '@/hooks/useTimer';
 import { Grid } from '@/components/Grid/Grid';
+import { Timer } from '@/components/GameControls/Timer';
+import { GameOver } from '@/components/GameOver/GameOver';
 import { loadDictionary } from '@/lib/dictionary';
 
 export default function Home() {
   const { session, startNewGame, submitSelection, cancelSelection, currentSelection } =
     useGameStore();
+  const { timeRemaining, isWarning } = useTimer();
 
   // Load dictionary on mount
   useEffect(() => {
@@ -19,6 +23,11 @@ export default function Home() {
   const handleNewGame = () => {
     startNewGame();
   };
+
+  // Show game over screen
+  if (session && session.gameState === 'gameover') {
+    return <GameOver score={session.score} foundWords={session.foundWords} onNewGame={handleNewGame} />;
+  }
 
   if (!session) {
     return (
@@ -37,6 +46,9 @@ export default function Home() {
   return (
     <div className="game-container">
       <h1 className="text-3xl font-bold mb-2">Boggler</h1>
+
+      {/* Timer */}
+      <Timer timeRemaining={timeRemaining} isWarning={isWarning} />
 
       {/* Score display */}
       <div className="score-board">

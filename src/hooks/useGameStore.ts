@@ -21,6 +21,7 @@ interface GameStore {
   removeLastFromSelection: () => void;
   submitSelection: () => { success: boolean; message: string };
   cancelSelection: () => void;
+  tickTimer: () => void;
   endGame: () => void;
 }
 
@@ -125,6 +126,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ currentSelection: null });
   },
 
+  tickTimer: () => {
+    const { session } = get();
+    if (!session || session.gameState !== 'playing') return;
+
+    const newTimeRemaining = Math.max(0, session.timeRemaining - 1);
+
+    set({
+      session: {
+        ...session,
+        timeRemaining: newTimeRemaining,
+      },
+    });
+  },
+
   endGame: () => {
     const { session } = get();
     if (!session) return;
@@ -134,7 +149,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         ...session,
         gameState: 'gameover',
         endedAt: new Date(),
+        timeRemaining: 0,
       },
+      currentSelection: null, // Clear any active selection
     });
   },
 }));

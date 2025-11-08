@@ -143,3 +143,12 @@ body {
   @apply bg-gray-200 text-gray-800;
   @apply hover:bg-gray-300;
 }
+
+/* Game Over Screen */
+.game-over-container {
+  @apply min-h-screen;
+  @apply flex flex-col items-center justify-center;
+  @apply p-4 md:p-8;
+  @apply gap-4;
+  @apply text-center;
+}
