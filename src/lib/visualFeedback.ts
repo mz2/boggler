@@ -36,7 +36,7 @@ export function flashScreenError(): void {
 }
 
 /**
- * Highlight grid cells with blue color for successful word
+ * Highlight grid cells with light blue color for successful word
  * Animates the specific cells that were part of the accepted word
  */
 export function highlightCells(positions: Position[]): void {
@@ -46,10 +46,10 @@ export function highlightCells(positions: Position[]): void {
       // Add success class
       cell.classList.add('cell-success');
 
-      // Remove after animation completes
+      // Remove after animation completes (2s animation)
       setTimeout(() => {
         cell.classList.remove('cell-success');
-      }, 1000);
+      }, 2000);
     }
   });
 }

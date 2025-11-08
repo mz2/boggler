@@ -58,19 +58,26 @@ body {
 }
 
 .grid-cell.cell-success {
-  @apply bg-blue-500;
-  @apply text-white;
-  @apply border-blue-600;
-  animation: cellSuccessFade 1s ease-out forwards;
+  @apply bg-blue-200;
+  @apply text-gray-900;
+  @apply border-blue-400;
+  animation: cellSuccessFade 2s ease-out forwards;
 }
 
 @keyframes cellSuccessFade {
   0% {
-    background-color: rgb(59 130 246);
+    background-color: rgb(191 219 254);
+    border-color: rgb(96 165 250);
+    transform: scale(1.1);
+  }
+  50% {
+    background-color: rgb(191 219 254);
+    border-color: rgb(96 165 250);
     transform: scale(1.05);
   }
   100% {
     background-color: transparent;
+    border-color: rgb(156 163 175);
     transform: scale(1);
   }
 }
