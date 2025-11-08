@@ -87,7 +87,14 @@ function getAdjacentPositions(pos: Position, size: number): Position[] {
  * Uses backtracking to explore all possible paths through adjacent cells
  * Returns the path if successful, null otherwise
  */
-function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, startCol: number, size: number): Position[] | null {
+function tryPlaceWord(
+  cells: GridCell[][],
+  word: string,
+  startRow: number,
+  startCol: number,
+  size: number,
+  occupiedCells: Set<string>
+): Position[] | null {
   if (startRow >= size || startCol >= size) return null;
 
   const path: Position[] = [];
@@ -116,6 +123,18 @@ function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, start
       // Skip if already used in this path
       if (used.has(nextPosKey)) continue;
 
+      // Check if this cell is occupied by a previously placed word
+      if (occupiedCells.has(nextPosKey)) {
+        // If occupied, check if the letter matches what we need
+        const existingLetter = cells[nextPos.row][nextPos.col].letter;
+        const requiredLetter = word[letterIndex];
+
+        // Skip if letters don't match (can't override)
+        if (existingLetter !== requiredLetter) continue;
+
+        // Letter matches, we can use this cell
+      }
+
       // Try placing the next letter here
       if (backtrack(nextPos, letterIndex + 1)) {
         return true;
@@ -128,12 +147,28 @@ function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, start
     return false;
   }
 
+  // Check if starting position is already occupied
+  const startPosKey = `${startRow},${startCol}`;
+  if (occupiedCells.has(startPosKey)) {
+    // If occupied, check if the letter matches
+    const existingLetter = cells[startRow][startCol].letter;
+    const requiredLetter = word[0];
+    if (existingLetter !== requiredLetter) return null;
+  }
+
   // Start the backtracking from the starting position
   const startPos = { row: startRow, col: startCol };
   if (backtrack(startPos, 1)) {
     // Place the word along the found path
     for (let i = 0; i < path.length; i++) {
-      cells[path[i].row][path[i].col].letter = word[i];
+      const pos = path[i];
+      const posKey = `${pos.row},${pos.col}`;
+
+      // Only set the letter if this cell isn't already occupied
+      // (if it's occupied, it already has the matching letter)
+      if (!occupiedCells.has(posKey)) {
+        cells[pos.row][pos.col].letter = word[i];
+      }
     }
     return [...path]; // Return a copy of the path
   }
@@ -148,6 +183,7 @@ function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, start
 export async function generateGrid(size: number): Promise<Grid> {
   const cells: GridCell[][] = [];
   const seededWords: SeededWord[] = [];
+  const occupiedCells = new Set<string>(); // Track cells used by seeded words
 
   // Initialize grid with random letters
   for (let row = 0; row < size; row++) {
@@ -194,13 +230,19 @@ export async function generateGrid(size: number): Promise<Grid> {
         const startRow = Math.floor(Math.random() * size);
         const startCol = Math.floor(Math.random() * size);
 
-        const placedPath = tryPlaceWord(cells, word, startRow, startCol, size);
+        const placedPath = tryPlaceWord(cells, word, startRow, startCol, size, occupiedCells);
         if (placedPath) {
           // Track the seeded word
           seededWords.push({
             text: word,
             positions: placedPath,
           });
+
+          // Mark all positions in this path as occupied
+          placedPath.forEach((pos) => {
+            occupiedCells.add(`${pos.row},${pos.col}`);
+          });
+
           break; // Successfully placed
         }
       }
