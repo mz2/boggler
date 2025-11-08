@@ -87,11 +87,23 @@ body {
 }
 
 .word-item {
-  @apply px-3 py-1;
+  @apply px-4 py-2;
   @apply bg-blue-500 text-white;
   @apply rounded-full;
-  @apply text-sm font-medium;
-  @apply shadow-sm;
+  @apply text-base font-semibold;
+  @apply shadow-md;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Score board */

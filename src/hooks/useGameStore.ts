@@ -100,8 +100,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
 
     // Validate the word
-    const foundWordsText = session.foundWords.map((w) => w.text);
-    const result = validateWordSubmission(session.grid, currentSelection.positions, foundWordsText);
+    const result = validateWordSubmission(session.grid, currentSelection.positions, session.foundWords);
 
     if (!result.isValid) {
       set({ currentSelection: null });

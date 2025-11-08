@@ -2,7 +2,7 @@
  * Word validation and path checking
  */
 
-import type { Grid, Position } from '@/types/game';
+import type { Grid, Position, FoundWord } from '@/types/game';
 import { areAdjacent, getCellAt } from './grid';
 import { isValidWord } from './dictionary';
 import { MIN_WORD_LENGTH } from '@/constants/config';
@@ -37,13 +37,21 @@ export function isValidPath(positions: Position[]): boolean {
 }
 
 /**
+ * Helper function to check if two position arrays are identical
+ */
+function arePositionsEqual(pos1: Position[], pos2: readonly Position[]): boolean {
+  if (pos1.length !== pos2.length) return false;
+  return pos1.every((p, i) => p.row === pos2[i].row && p.col === pos2[i].col);
+}
+
+/**
  * Validate a word submission
- * Checks: path validity, word length, dictionary, duplicates
+ * Checks: path validity, word length, dictionary, duplicate paths
  */
 export function validateWordSubmission(
   grid: Grid,
   positions: Position[],
-  foundWords: string[]
+  foundWords: FoundWord[]
 ): ValidationResult {
   // Check minimum length
   if (positions.length < MIN_WORD_LENGTH) {
@@ -75,11 +83,12 @@ export function validateWordSubmission(
     };
   }
 
-  // Check for duplicates
-  if (foundWords.includes(word)) {
+  // Check for duplicate paths (same word with same exact path)
+  const duplicatePath = foundWords.find((fw) => arePositionsEqual(positions, fw.positions));
+  if (duplicatePath) {
     return {
       isValid: false,
-      error: 'Word already found',
+      error: 'This exact path already used',
       word,
     };
   }
