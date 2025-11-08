@@ -1,0 +1,9 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow sensitive areas
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://boggler.vercel.app/sitemap.xml
