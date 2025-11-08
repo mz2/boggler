@@ -58,10 +58,10 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
 
   return (
     <div className="game-over-container">
-      <h1 className="text-5xl font-bold mb-6">Game Over!</h1>
+      <h1 className="text-5xl font-bold mb-6">Time is up!</h1>
 
       <div className="mb-8">
-        <div className="text-6xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>{score}</div>
+        <h2 className="text-4xl font-bold mb-2">Score: {score}</h2>
         <div className="text-xl opacity-90">
           {foundWords.length} {foundWords.length === 1 ? 'word' : 'words'} found
         </div>
