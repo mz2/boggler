@@ -42,8 +42,7 @@ export default function Home() {
   if (!session) {
     return (
       <div className="game-container">
-        <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">Boggler</h1>
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
           Find as many words as you can by connecting adjacent letters!
         </p>
 
@@ -62,8 +61,6 @@ export default function Home() {
 
   return (
     <div className="game-container">
-      <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Boggler</h1>
-
       {/* Timer */}
       <Timer timeRemaining={timeRemaining} isWarning={isWarning} />
 

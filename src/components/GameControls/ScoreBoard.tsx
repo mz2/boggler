@@ -9,15 +9,8 @@ interface ScoreBoardProps {
 
 export function ScoreBoard({ score, wordCount }: ScoreBoardProps) {
   return (
-    <div className="score-board">
-      <div>
-        <span className="text-gray-600">Score:</span>{' '}
-        <span className="text-blue-600">{score}</span>
-      </div>
-      <div>
-        <span className="text-gray-600">Words:</span>{' '}
-        <span className="text-blue-600">{wordCount}</span>
-      </div>
+    <div className="text-4xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
+      Score: {score} ({wordCount} word{wordCount !== 1 ? 's' : ''})
     </div>
   );
 }

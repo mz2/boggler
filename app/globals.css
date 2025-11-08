@@ -57,6 +57,24 @@ body {
   @apply text-blue-400;
 }
 
+.grid-cell.cell-success {
+  @apply bg-blue-500;
+  @apply text-white;
+  @apply border-blue-600;
+  animation: cellSuccessFade 1s ease-out forwards;
+}
+
+@keyframes cellSuccessFade {
+  0% {
+    background-color: rgb(59 130 246);
+    transform: scale(1.05);
+  }
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
 /* Game container */
 .game-container {
   @apply min-h-screen;
