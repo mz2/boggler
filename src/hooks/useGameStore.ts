@@ -18,6 +18,7 @@ interface GameStore {
   startNewGame: (gridSize?: number, timerDuration?: number) => void;
   startSelection: (position: Position, letter: string) => void;
   extendSelection: (position: Position, letter: string) => void;
+  removeLastFromSelection: () => void;
   submitSelection: () => { success: boolean; message: string };
   cancelSelection: () => void;
   endGame: () => void;
@@ -64,6 +65,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
         positions: newPositions,
         wordText: newWordText,
         isValid: true, // Will be validated on submit
+      },
+    });
+  },
+
+  removeLastFromSelection: () => {
+    const { currentSelection } = get();
+    if (!currentSelection || currentSelection.positions.length === 0) return;
+
+    // If only one position, clear the selection entirely
+    if (currentSelection.positions.length === 1) {
+      set({ currentSelection: null });
+      return;
+    }
+
+    // Remove the last position and letter
+    const newPositions = currentSelection.positions.slice(0, -1);
+    const newWordText = currentSelection.wordText.slice(0, -1);
+
+    set({
+      currentSelection: {
+        positions: newPositions,
+        wordText: newWordText,
+        isValid: true,
       },
     });
   },

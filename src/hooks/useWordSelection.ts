@@ -9,7 +9,7 @@ import { useGameStore } from './useGameStore';
 import { areAdjacent } from '@/lib/grid';
 
 export function useWordSelection() {
-  const { startSelection, extendSelection, cancelSelection, currentSelection } = useGameStore();
+  const { startSelection, extendSelection, removeLastFromSelection, cancelSelection, currentSelection } = useGameStore();
 
   const handleCellClick = useCallback(
     (position: Position, letter: string) => {
@@ -25,9 +25,10 @@ export function useWordSelection() {
       );
 
       if (alreadySelected) {
-        // If clicking the last cell, do nothing (already selected)
+        // If clicking the last cell, remove it (erase operation)
         const lastPos = currentSelection.positions[currentSelection.positions.length - 1];
         if (lastPos.row === position.row && lastPos.col === position.col) {
+          removeLastFromSelection();
           return;
         }
         // If clicking any other cell in the selection, clear and start fresh
@@ -47,7 +48,7 @@ export function useWordSelection() {
         startSelection(position, letter);
       }
     },
-    [currentSelection, startSelection, extendSelection, cancelSelection]
+    [currentSelection, startSelection, extendSelection, removeLastFromSelection, cancelSelection]
   );
 
   return {
