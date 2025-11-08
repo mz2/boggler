@@ -42,6 +42,7 @@ export default function Home() {
   if (!session) {
     return (
       <div className="game-container">
+        <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-gray-100">Boggler</h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
           Find as many words as you can by connecting adjacent letters!
         </p>
