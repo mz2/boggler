@@ -8,6 +8,7 @@ import { generateGrid } from '@/lib/grid';
 import { createNewSession, addFoundWord } from '@/lib/gameState';
 import { validateWordSubmission } from '@/lib/validation';
 import { DEFAULT_GRID_SIZE, DEFAULT_TIMER_DURATION } from '@/constants/config';
+import { playSuccessSound, playErrorSound } from '@/lib/audio';
 
 interface GameStore {
   // State
@@ -109,9 +110,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const result = validateWordSubmission(session.grid, currentSelection.positions, session.foundWords);
 
     if (!result.isValid) {
+      // Play error sound for rejected words
+      playErrorSound();
       set({ currentSelection: null });
       return { success: false, message: result.error || 'Invalid word' };
     }
+
+    // Play success sound for accepted words
+    playSuccessSound();
 
     // Add word to session
     const updatedSession = addFoundWord(session, result.word!, currentSelection.positions);
