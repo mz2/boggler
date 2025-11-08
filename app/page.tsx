@@ -6,15 +6,16 @@ import { useTimer } from '@/hooks/useTimer';
 import { Grid } from '@/components/Grid/Grid';
 import { Timer } from '@/components/GameControls/Timer';
 import { ScoreBoard } from '@/components/GameControls/ScoreBoard';
+import { GameSettings } from '@/components/GameControls/GameSettings';
 import { WordList } from '@/components/WordList/WordList';
 import { GameOver } from '@/components/GameOver/GameOver';
 import { loadDictionary } from '@/lib/dictionary';
-import { TIMER_DURATIONS } from '@/constants/config';
 
 export default function Home() {
   const { session, startNewGame, submitSelection, cancelSelection, currentSelection } =
     useGameStore();
   const { timeRemaining, isWarning } = useTimer();
+  const [selectedGridSize, setSelectedGridSize] = useState(9);
   const [selectedDuration, setSelectedDuration] = useState(30);
 
   // Load dictionary on mount
@@ -25,7 +26,12 @@ export default function Home() {
   }, []);
 
   const handleNewGame = () => {
-    startNewGame(undefined, selectedDuration);
+    startNewGame(selectedGridSize, selectedDuration);
+  };
+
+  const handleSettingsChange = (settings: { gridSize: number; timerDuration: number }) => {
+    setSelectedGridSize(settings.gridSize);
+    setSelectedDuration(settings.timerDuration);
   };
 
   // Show game over screen
@@ -41,24 +47,13 @@ export default function Home() {
           Find as many words as you can by connecting adjacent letters!
         </p>
 
-        <div className="flex items-center gap-4 mb-4">
-          <label htmlFor="timer-duration" className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Timer:
-          </label>
-          <select
-            id="timer-duration"
-            value={selectedDuration}
-            onChange={(e) => setSelectedDuration(Number(e.target.value))}
-            className="px-4 py-2 border-2 border-gray-300 rounded-lg font-medium focus:outline-none focus:border-blue-500 bg-white text-gray-900"
-          >
-            <option value={30}>30 seconds</option>
-            <option value={60}>1 minute</option>
-            <option value={180}>3 minutes</option>
-            <option value={300}>5 minutes</option>
-          </select>
-        </div>
+        <GameSettings
+          gridSize={selectedGridSize}
+          timerDuration={selectedDuration}
+          onChange={handleSettingsChange}
+        />
 
-        <button onClick={handleNewGame} className="btn btn-primary">
+        <button onClick={handleNewGame} className="btn btn-primary mt-6">
           New Game
         </button>
       </div>
@@ -99,23 +94,14 @@ export default function Home() {
       {/* Found words */}
       <WordList words={session.foundWords} />
 
-      {/* New game button with timer selector */}
-      <div className="flex flex-col items-center gap-3 mt-4">
-        <div className="flex items-center gap-4">
-          <label htmlFor="timer-duration-ingame" className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            Timer:
-          </label>
-          <select
-            id="timer-duration-ingame"
-            value={selectedDuration}
-            onChange={(e) => setSelectedDuration(Number(e.target.value))}
-            className="px-3 py-1 border-2 border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:border-blue-500 bg-white text-gray-900"
-          >
-            <option value={30}>30 seconds</option>
-            <option value={60}>1 minute</option>
-            <option value={180}>3 minutes</option>
-            <option value={300}>5 minutes</option>
-          </select>
+      {/* New game button with settings */}
+      <div className="flex flex-col items-center gap-4 mt-4">
+        <div className="scale-90">
+          <GameSettings
+            gridSize={selectedGridSize}
+            timerDuration={selectedDuration}
+            onChange={handleSettingsChange}
+          />
         </div>
         <button onClick={handleNewGame} className="btn btn-secondary">
           New Game
