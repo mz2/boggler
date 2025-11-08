@@ -1,50 +1,117 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+=============================================================================
+SYNC IMPACT REPORT
+=============================================================================
+Version change: [TEMPLATE] → 1.0.0
+Constitution Type: Initial ratification (from template)
+
+Modified principles:
+- PRINCIPLE_1: Test-Driven Development (new)
+
+Added sections:
+- Core Principles section fully populated
+- Governance section fully defined
+- Development Workflow section added
+
+Removed sections:
+- Template placeholders removed
+
+Templates requiring updates:
+- ✅ .specify/templates/plan-template.md (validated - contains Constitution Check section)
+- ✅ .specify/templates/spec-template.md (validated - aligns with user scenarios and requirements)
+- ✅ .specify/templates/tasks-template.md (validated - includes test-first workflow and user story organization)
+
+Follow-up TODOs:
+- None - all placeholders have been filled with concrete values
+
+Notes:
+- User provided one principle (TDD) which has been expanded into comprehensive testing guidance
+- Project purpose and tech stack remain flexible (to be defined as project evolves)
+- Additional principles can be added via future amendments
+=============================================================================
+-->
+
+# Boggler Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Test-Driven Development (NON-NEGOTIABLE)
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Test-driven development is mandatory for all code contributions. The discipline MUST
+be followed rigorously:
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- **Write tests FIRST**: Before implementing any feature or function, write the test
+  that defines expected behavior
+- **Ensure tests FAIL**: Verify that newly written tests fail before implementation
+  begins (red state)
+- **Implement to pass**: Write minimal code required to make tests pass (green state)
+- **Refactor with confidence**: Improve code structure while maintaining passing tests
+- **Three-tier testing strategy**:
+  - **Logic tests**: Required for all pure functions and business logic
+  - **Component tests**: Required where appropriate for modules, services, and UI components
+  - **End-to-end tests**: Required when possible for critical user journeys
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: TDD ensures code correctness, maintainability, and serves as living
+documentation. It prevents regression, enables fearless refactoring, and enforces
+clear thinking about interfaces before implementation.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+**Enforcement**: No pull request may be merged without accompanying tests. Code review
+MUST verify that tests were written before implementation (check commit history or
+ask author to confirm).
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Development Workflow
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Code Quality Gates
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+All contributions MUST pass these gates before merge:
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+1. **Test coverage gate**: New code MUST have tests (logic, component, and/or e2e as appropriate)
+2. **Test-first verification**: Reviewer MUST verify tests were written before implementation
+3. **All tests passing**: CI/CD pipeline MUST show green status
+4. **Code review approval**: At least one reviewer MUST approve changes
+5. **Constitution compliance**: Reviewer MUST verify adherence to all principles
+
+### Testing Organization
+
+Tests MUST be organized according to the following structure:
+
+```
+tests/
+├── unit/          # Pure function and logic tests
+├── component/     # Module, service, and component tests
+└── e2e/           # End-to-end user journey tests
+```
+
+Naming convention: `test_[feature_or_function_name].py` or `[FeatureName].test.ts`
+(adjust extension per language).
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Amendment Procedure
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+1. Proposed changes MUST be documented with rationale
+2. Amendments MUST be approved by project maintainer(s)
+3. Version MUST be incremented following semantic versioning:
+   - **MAJOR** (X.0.0): Backward incompatible changes, principle removal/redefinition
+   - **MINOR** (0.X.0): New principles added, material expansions to existing guidance
+   - **PATCH** (0.0.X): Clarifications, wording fixes, non-semantic refinements
+4. All dependent templates and documentation MUST be updated for consistency
+5. A Sync Impact Report MUST be generated and prepended to the constitution file
+
+### Compliance Review
+
+- All pull requests MUST be reviewed for constitution compliance
+- Violations MUST be justified in writing and approved by maintainer(s)
+- Repeated violations without justification indicate need for constitution amendment
+  or contributor education
+- Complexity introduced must be justified against simpler alternatives
+
+### Versioning & History
+
+- RATIFICATION_DATE marks original adoption
+- LAST_AMENDED_DATE updates whenever changes are made
+- Constitution supersedes all other development practices unless explicitly noted
+- For runtime development guidance, refer to `AGENTS.md` or equivalent agent
+  instruction files
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-08 | **Last Amended**: 2025-11-08
