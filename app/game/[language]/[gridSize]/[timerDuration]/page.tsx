@@ -18,8 +18,16 @@ function GamePageContent() {
   const debugMode = searchParams.get('debug') === 'true';
 
   const language = (params.language as Language) || 'english';
-  const gridSize = parseInt(params.gridSize as string, 10) || 9;
-  const timerDuration = parseInt(params.timerDuration as string, 10) || 180;
+
+  // Parse grid size from "NxN" format (e.g., "9x9" -> 9)
+  const gridSizeParam = params.gridSize as string;
+  const gridSizeMatch = gridSizeParam?.match(/^(\d+)x\1$/);
+  const gridSize = gridSizeMatch ? parseInt(gridSizeMatch[1], 10) : 9;
+
+  // Parse timer duration from "Ns" format (e.g., "180s" -> 180)
+  const timerParam = params.timerDuration as string;
+  const timerMatch = timerParam?.match(/^(\d+)s$/);
+  const timerDuration = timerMatch ? parseInt(timerMatch[1], 10) : 180;
 
   const { session, submitSelection, cancelSelection, currentSelection, startNewGame } = useGameStore();
   const { timeRemaining, isWarning } = useTimer();
@@ -33,10 +41,12 @@ function GamePageContent() {
 
     if (!validLanguages.includes(language) ||
         !validGridSizes.includes(gridSize) ||
-        !validTimerDurations.includes(timerDuration)) {
-      router.push('/game/english/9/180');
+        !validTimerDurations.includes(timerDuration) ||
+        !gridSizeMatch ||
+        !timerMatch) {
+      router.push('/game/english/9x9/180s');
     }
-  }, [language, gridSize, timerDuration, router]);
+  }, [language, gridSize, timerDuration, gridSizeMatch, timerMatch, router]);
 
   // Handler for starting a new game
   const handleNewGame = async () => {

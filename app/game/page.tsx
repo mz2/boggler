@@ -11,7 +11,7 @@ function GamePageContent() {
   // Redirect to the new URL structure with default settings
   useEffect(() => {
     const debugQuery = debugParam ? `?debug=${debugParam}` : '';
-    router.push(`/game/english/9/180${debugQuery}`);
+    router.push(`/game/english/9x9/180s${debugQuery}`);
   }, [router, debugParam]);
 
   return (
