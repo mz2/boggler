@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGameStore } from '@/hooks/useGameStore';
 import { useTimer } from '@/hooks/useTimer';
@@ -10,7 +10,7 @@ import { ScoreBoard } from '@/components/GameControls/ScoreBoard';
 import { WordList } from '@/components/WordList/WordList';
 import { GameOver } from '@/components/GameOver/GameOver';
 
-export default function GamePage() {
+function GamePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const debugMode = searchParams.get('debug') === 'true';
@@ -99,5 +99,13 @@ export default function GamePage() {
       {/* Found words */}
       <WordList words={session.foundWords} />
     </div>
+  );
+}
+
+export default function GamePage() {
+  return (
+    <Suspense fallback={<div className="game-container">Loading...</div>}>
+      <GamePageContent />
+    </Suspense>
   );
 }
