@@ -51,9 +51,9 @@ describe('GameSettings Component', () => {
 
   it('should have all grid size options (4x4, 9x9, 16x16)', () => {
     render(<GameSettings gridSize={9} timerDuration={180} onChange={mockOnChange} />);
-    expect(screen.getByText(/4×4/i)).toBeInTheDocument();
-    expect(screen.getByText(/9×9/i)).toBeInTheDocument();
-    expect(screen.getByText(/16×16/i)).toBeInTheDocument();
+    expect(screen.getByText('4×4')).toBeInTheDocument();
+    expect(screen.getByText('9×9')).toBeInTheDocument();
+    expect(screen.getByText('16×16')).toBeInTheDocument();
   });
 
   it('should have all timer duration options', () => {

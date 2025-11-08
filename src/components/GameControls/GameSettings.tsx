@@ -30,9 +30,9 @@ export function GameSettings({ gridSize, timerDuration, onChange }: GameSettings
           onChange={(e) => handleGridSizeChange(Number(e.target.value))}
           className="px-4 py-2 border-2 border-gray-300 rounded-lg font-medium focus:outline-none focus:border-blue-500 bg-white text-gray-900"
         >
-          <option value={4}>4×4 (Easy)</option>
-          <option value={9}>9×9 (Medium)</option>
-          <option value={16}>16×16 (Hard)</option>
+          <option value={4}>4×4</option>
+          <option value={9}>9×9</option>
+          <option value={16}>16×16</option>
         </select>
       </div>
 
