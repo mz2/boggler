@@ -67,7 +67,8 @@ describe('Dictionary API', () => {
       expect(data).toHaveProperty('seedingWords');
       expect(data).toHaveProperty('validationWords');
       expect(data.seedingCount).toBeGreaterThan(0);
-      // Finnish validation currently uses same source (TODO: upgrade to comprehensive dict)
+      // Finnish validation uses comprehensive dictionary (93k words from Kotus)
+      expect(data.validationCount).toBeGreaterThan(90000);
       expect(data.validationCount).toBeGreaterThan(data.seedingCount);
     });
 

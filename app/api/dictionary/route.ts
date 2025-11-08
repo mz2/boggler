@@ -52,13 +52,8 @@ async function loadValidationDictionary(language: string): Promise<Set<string>> 
     // Use word-list package for comprehensive English dictionary
     wordFilePath = join(process.cwd(), 'node_modules/word-list/words.txt');
   } else if (language === 'finnish') {
-    // For Finnish, use the same source but take all words (not just first 5k)
-    // TODO: Replace with comprehensive Finnish dictionary when available
-    wordFilePath = join(
-      process.cwd(),
-      'node_modules/most-common-words-by-language/build/resources',
-      `${language}.txt`
-    );
+    // Use comprehensive Finnish dictionary (93,086 words from Kotus)
+    wordFilePath = join(process.cwd(), 'dictionaries/finnish.txt');
   } else {
     throw new Error(`Unsupported language: ${language}`);
   }
