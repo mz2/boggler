@@ -223,28 +223,61 @@ export async function generateGrid(size: number): Promise<Grid> {
     for (let i = 0; i < wordsToPlace; i++) {
       // Pick a random word from the dictionary for this length
       const word = wordPool[Math.floor(Math.random() * wordPool.length)];
+      let placedPath: Position[] | null = null;
 
-      // Try to place it at a random position
-      const maxAttempts = 10;
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        const startRow = Math.floor(Math.random() * size);
-        const startCol = Math.floor(Math.random() * size);
+      // First, try to place starting from overlap positions with existing words
+      if (occupiedCells.size > 0) {
+        // Find cells where the first letter of the word matches existing letters
+        const overlapCandidates: Position[] = [];
+        const firstLetter = word[0];
 
-        const placedPath = tryPlaceWord(cells, word, startRow, startCol, size, occupiedCells);
-        if (placedPath) {
-          // Track the seeded word
-          seededWords.push({
-            text: word,
-            positions: placedPath,
-          });
-
-          // Mark all positions in this path as occupied
-          placedPath.forEach((pos) => {
-            occupiedCells.add(`${pos.row},${pos.col}`);
-          });
-
-          break; // Successfully placed
+        for (let row = 0; row < size; row++) {
+          for (let col = 0; col < size; col++) {
+            const posKey = `${row},${col}`;
+            if (occupiedCells.has(posKey)) {
+              const cellLetter = cells[row][col].letter;
+              // Check if this cell has the first letter of our word
+              if (cellLetter === firstLetter) {
+                overlapCandidates.push({ row, col });
+              }
+            }
+          }
         }
+
+        // Shuffle overlap candidates for variety
+        overlapCandidates.sort(() => Math.random() - 0.5);
+
+        // Try placing from each overlap candidate
+        for (const overlapPos of overlapCandidates.slice(0, 5)) {
+          // Try first 5
+          placedPath = tryPlaceWord(cells, word, overlapPos.row, overlapPos.col, size, occupiedCells);
+          if (placedPath) break;
+        }
+      }
+
+      // If overlap placement failed, try random positions
+      if (!placedPath) {
+        const maxAttempts = 10;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const startRow = Math.floor(Math.random() * size);
+          const startCol = Math.floor(Math.random() * size);
+
+          placedPath = tryPlaceWord(cells, word, startRow, startCol, size, occupiedCells);
+          if (placedPath) break;
+        }
+      }
+
+      // If we successfully placed the word, track it
+      if (placedPath) {
+        seededWords.push({
+          text: word,
+          positions: placedPath,
+        });
+
+        // Mark all positions in this path as occupied
+        placedPath.forEach((pos) => {
+          occupiedCells.add(`${pos.row},${pos.col}`);
+        });
       }
     }
   }
