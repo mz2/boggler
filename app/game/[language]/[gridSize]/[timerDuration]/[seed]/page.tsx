@@ -68,17 +68,13 @@ function GamePageContent() {
     }
   };
 
-  // Redirect to home if no session (unless debug mode or creating a new game)
+  // Auto-start game if accessing URL directly (no session yet)
   useEffect(() => {
     if (!session && !isCreatingGame.current) {
-      if (debugMode) {
-        // Auto-start a game in debug mode with URL parameters
-        handleNewGame();
-      } else {
-        router.push('/');
-      }
+      // Auto-start a game with URL parameters
+      handleNewGame();
     }
-  }, [session, router, debugMode]);
+  }, [session]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
