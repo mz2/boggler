@@ -18,8 +18,8 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 <!-- OPENSPEC:END -->
 
 ## Active Technologies
-- TypeScript 5.x with Next.js 14+ (App Router) + React 18+, Next.js 14+, Tailwind CSS for styling, Liveblocks (future multiplayer) (001-word-grid-game)
+- TypeScript 5.x with Next.js 16+ (App Router) + React 19.2+, Next.js 16+, Tailwind CSS for styling, Liveblocks (future multiplayer) (001-word-grid-game)
 - Client-side (localStorage for preferences) + Liveblocks storage (future collaborative state) (001-word-grid-game)
 
 ## Recent Changes
-- 001-word-grid-game: Added TypeScript 5.x with Next.js 14+ (App Router) + React 18+, Next.js 14+, Tailwind CSS for styling, Liveblocks (future multiplayer)
+- 001-word-grid-game: Added TypeScript 5.x with Next.js 16+ (App Router) + React 19.2+, Next.js 16+, Tailwind CSS for styling, Liveblocks (future multiplayer)
