@@ -58,11 +58,11 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
 
   return (
     <div className="game-over-container">
-      <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-gray-100">Game Over!</h1>
+      <h1 className="text-5xl font-bold mb-6">Game Over!</h1>
 
       <div className="mb-8">
-        <div className="text-6xl font-bold text-blue-600 mb-2">{score}</div>
-        <div className="text-xl text-gray-600 dark:text-gray-300">
+        <div className="text-6xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>{score}</div>
+        <div className="text-xl opacity-90">
           {foundWords.length} {foundWords.length === 1 ? 'word' : 'words'} found
         </div>
       </div>
@@ -162,7 +162,7 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
 
       {foundWords.length > 0 && (
         <div className="w-full max-w-2xl mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Words Found</h2>
+          <h2 className="text-2xl font-semibold mb-4">Words Found</h2>
           <div className="word-list">
             {foundWords.map((word) => (
               <span key={word.id} className="word-item">
@@ -175,8 +175,8 @@ export function GameOver({ score, foundWords, grid, onNewGame }: GameOverProps) 
 
       {unfoundSeededWords.length > 0 && (
         <div className="w-full max-w-2xl mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Missed Words</h2>
-          <div className="text-gray-600 dark:text-gray-300 mb-2 text-sm">
+          <h2 className="text-2xl font-semibold mb-4">Missed Words</h2>
+          <div className="mb-2 text-sm opacity-90">
             (Click a word to see its path on the grid)
           </div>
           <div className="word-list">
