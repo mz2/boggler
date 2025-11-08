@@ -15,7 +15,7 @@ export function Timer({ timeRemaining, isWarning }: TimerProps) {
   };
 
   return (
-    <div className={`timer ${isWarning ? 'warning' : ''}`}>
+    <div className={`timer ${isWarning ? 'warning' : ''} text-gray-900 dark:text-gray-100`}>
       {formatTime(timeRemaining)}
     </div>
   );

@@ -50,5 +50,5 @@ export const LETTER_FREQUENCIES: Record<string, number> = {
 // Default grid size
 export const DEFAULT_GRID_SIZE: GridSize = 9;
 
-// Default timer duration (30 seconds for testing)
-export const DEFAULT_TIMER_DURATION = 30;
+// Default timer duration (3 minutes)
+export const DEFAULT_TIMER_DURATION = 180;

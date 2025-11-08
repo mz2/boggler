@@ -10,6 +10,7 @@ import { validateWordSubmission } from '@/lib/validation';
 import { DEFAULT_GRID_SIZE, DEFAULT_TIMER_DURATION } from '@/constants/config';
 import { playSuccessSound, playErrorSound } from '@/lib/audio';
 import { triggerConfetti } from '@/lib/confetti';
+import { flashScreen } from '@/lib/visualFeedback';
 
 interface GameStore {
   // State
@@ -111,13 +112,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const result = validateWordSubmission(session.grid, currentSelection.positions, session.foundWords);
 
     if (!result.isValid) {
-      // Play error sound for rejected words
+      // Visual and audio feedback for rejected words
+      flashScreen('error');
       playErrorSound();
       set({ currentSelection: null });
       return { success: false, message: result.error || 'Invalid word' };
     }
 
-    // Play success sound for accepted words
+    // Visual and audio feedback for accepted words
+    flashScreen('success');
     playSuccessSound();
 
     // Trigger confetti for 5+ letter words

@@ -16,7 +16,7 @@ export default function Home() {
     useGameStore();
   const { timeRemaining, isWarning } = useTimer();
   const [selectedGridSize, setSelectedGridSize] = useState(9);
-  const [selectedDuration, setSelectedDuration] = useState(30);
+  const [selectedDuration, setSelectedDuration] = useState(180);
 
   // Load dictionary on mount
   useEffect(() => {
