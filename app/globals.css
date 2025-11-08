@@ -13,7 +13,7 @@
 }
 
 body {
-  color: var(--foreground);
+  color: #1a1a1a;
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -26,13 +26,16 @@ body {
 .grid-cell {
   @apply flex items-center justify-center;
   @apply w-full h-full;
-  @apply text-2xl font-bold;
-  @apply border-2 border-gray-300;
+  @apply text-5xl font-bold;
+  @apply border-2 border-gray-400;
   @apply bg-white;
-  @apply transition-all duration-150;
+  @apply text-gray-900;
+  @apply transition-all duration-100;
   @apply cursor-pointer;
   @apply select-none;
   @apply touch-none;
+  min-width: 60px;
+  min-height: 60px;
 }
 
 .grid-cell:hover {
@@ -48,8 +51,9 @@ body {
 }
 
 .grid-cell.found {
-  @apply bg-green-100;
-  @apply border-green-400;
+  @apply bg-blue-50;
+  @apply border-blue-200;
+  @apply text-blue-400;
 }
 
 /* Game container */

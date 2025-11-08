@@ -14,9 +14,18 @@ export function Grid({ grid }: GridProps) {
   const { handlePointerDown, handlePointerEnter, handlePointerUp, handlePointerCancel } =
     useWordSelection();
 
+  const { session } = useGameStore();
+
   const isPositionSelected = (row: number, col: number): boolean => {
     if (!currentSelection) return false;
     return currentSelection.positions.some((pos) => pos.row === row && pos.col === col);
+  };
+
+  const isPositionInFoundWord = (row: number, col: number): boolean => {
+    if (!session) return false;
+    return session.foundWords.some((word) =>
+      word.positions.some((pos) => pos.row === row && pos.col === col)
+    );
   };
 
   const gridStyle = {
@@ -41,7 +50,7 @@ export function Grid({ grid }: GridProps) {
               key={`${cell.row}-${cell.col}`}
               cell={cell}
               isSelected={isPositionSelected(cell.row, cell.col)}
-              isFound={false} // TODO: Implement found word highlighting
+              isFound={isPositionInFoundWord(cell.row, cell.col)}
               onPointerDown={() => handlePointerDown({ row: cell.row, col: cell.col }, cell.letter)}
               onPointerEnter={() => handlePointerEnter({ row: cell.row, col: cell.col }, cell.letter)}
             />
