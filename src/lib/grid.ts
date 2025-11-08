@@ -202,12 +202,12 @@ export async function generateGrid(size: number, language: Language = 'english')
 
   // Determine how many words to seed based on grid size
   const wordCounts: Record<number, number> = {
-    4: Math.ceil(size / 2),                // More 4-letter words
-    5: Math.ceil(size / 2),                // More 5-letter words
-    6: Math.ceil(size / 3),
-    7: Math.max(1, Math.floor(size / 4)),
-    8: Math.max(1, Math.floor(size / 5)),
-    9: Math.max(1, Math.floor(size / 6)),  // Fewer 9-letter words
+    4: Math.ceil(size * 0.8),              // More 4-letter words
+    5: Math.ceil(size * 0.8),              // More 5-letter words
+    6: Math.ceil(size * 0.6),              // More 6-letter words
+    7: Math.max(1, Math.ceil(size / 3)),   // More 7-letter words
+    8: Math.max(1, Math.ceil(size / 4)),   // More 8-letter words
+    9: Math.max(1, Math.ceil(size / 5)),   // More 9-letter words
   };
 
   // Load dictionary words for specified language
