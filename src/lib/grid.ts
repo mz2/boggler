@@ -124,9 +124,9 @@ export async function generateGrid(size: number): Promise<Grid> {
 
   // Determine how many words to seed based on grid size
   const wordCounts: Record<number, number> = {
-    3: Math.ceil(size / 2),      // More 3-letter words
-    4: Math.ceil(size / 2),
-    5: Math.ceil(size / 3),
+    3: Math.max(1, Math.floor(size / 4)),  // Fewer 3-letter words
+    4: Math.ceil(size / 2),                // More 4-letter words
+    5: Math.ceil(size / 2),                // More 5-letter words
     6: Math.ceil(size / 3),
     7: Math.max(1, Math.floor(size / 4)),
     8: Math.max(1, Math.floor(size / 5)),
