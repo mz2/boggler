@@ -26,12 +26,17 @@ export default function GamePage() {
     }
   };
 
-  // Redirect to home if no session
+  // Redirect to home if no session (unless debug mode, then start a game)
   useEffect(() => {
     if (!session) {
-      router.push('/');
+      if (debugMode) {
+        // Auto-start a game in debug mode
+        handleNewGame();
+      } else {
+        router.push('/');
+      }
     }
-  }, [session, router]);
+  }, [session, router, debugMode]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
