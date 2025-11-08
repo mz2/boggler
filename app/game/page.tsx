@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGameStore } from '@/hooks/useGameStore';
 import { useTimer } from '@/hooks/useTimer';
@@ -16,19 +16,23 @@ function GamePageContent() {
   const debugMode = searchParams.get('debug') === 'true';
   const { session, submitSelection, cancelSelection, currentSelection, startNewGame } = useGameStore();
   const { timeRemaining, isWarning } = useTimer();
+  const isCreatingGame = useRef(false);
 
   // Handler for starting a new game
   const handleNewGame = async () => {
     try {
+      isCreatingGame.current = true;
       await startNewGame();
+      isCreatingGame.current = false;
     } catch (error) {
       console.error('Failed to start new game:', error);
+      isCreatingGame.current = false;
     }
   };
 
-  // Redirect to home if no session (unless debug mode, then start a game)
+  // Redirect to home if no session (unless debug mode or creating a new game)
   useEffect(() => {
-    if (!session) {
+    if (!session && !isCreatingGame.current) {
       if (debugMode) {
         // Auto-start a game in debug mode
         handleNewGame();
