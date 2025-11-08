@@ -2,6 +2,35 @@
 =============================================================================
 SYNC IMPACT REPORT
 =============================================================================
+Version change: 1.0.0 → 1.1.0
+Constitution Type: Amendment (MINOR version bump)
+
+Modified principles:
+- Code Quality Gates: Added linting and formatting requirements (gates 3-4)
+
+Added sections:
+- Linting gate (ESLint) - gate 3
+- Formatting gate (Prettier) - gate 4
+
+Changes to existing gates:
+- Previous gates 3-5 renumbered to 5-7
+
+Templates requiring updates:
+- ✅ specs/001-word-grid-game/tasks.md (updated - added T006a-T006f for linting/formatting/CI)
+- ✅ specs/001-word-grid-game/quickstart.md (updated - added section 6 for linting/formatting setup)
+
+Follow-up TODOs:
+- None - all affected documentation has been updated
+
+Notes:
+- Amendment triggered by user request for linting, formatting, and CI setup
+- Ensures code quality standards are enforced via automated tooling
+- CI/CD pipeline (gate 5) now includes linting and formatting checks
+=============================================================================
+
+=============================================================================
+SYNC IMPACT REPORT (v1.0.0)
+=============================================================================
 Version change: [TEMPLATE] → 1.0.0
 Constitution Type: Initial ratification (from template)
 
@@ -67,9 +96,11 @@ All contributions MUST pass these gates before merge:
 
 1. **Test coverage gate**: New code MUST have tests (logic, component, and/or e2e as appropriate)
 2. **Test-first verification**: Reviewer MUST verify tests were written before implementation
-3. **All tests passing**: CI/CD pipeline MUST show green status
-4. **Code review approval**: At least one reviewer MUST approve changes
-5. **Constitution compliance**: Reviewer MUST verify adherence to all principles
+3. **Linting gate**: All code MUST pass ESLint checks with zero errors and warnings
+4. **Formatting gate**: All code MUST pass Prettier formatting checks
+5. **All tests passing**: CI/CD pipeline MUST show green status
+6. **Code review approval**: At least one reviewer MUST approve changes
+7. **Constitution compliance**: Reviewer MUST verify adherence to all principles
 
 ### Testing Organization
 
@@ -114,4 +145,4 @@ Naming convention: `test_[feature_or_function_name].py` or `[FeatureName].test.t
 - For runtime development guidance, refer to `AGENTS.md` or equivalent agent
   instruction files
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-08 | **Last Amended**: 2025-11-08
+**Version**: 1.1.0 | **Ratified**: 2025-11-08 | **Last Amended**: 2025-11-08

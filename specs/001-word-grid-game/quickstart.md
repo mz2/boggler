@@ -41,7 +41,7 @@ npm install zustand uuid word-list
 npm install -D @types/uuid
 
 # Testing dependencies
-npm install -D jest @testing-library/react @testing-library/jest-dom @playwright/test
+npm install -D vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom jsdom @playwright/test
 
 # Future multiplayer (optional, Phase 2+)
 # npm install @liveblocks/client @liveblocks/zustand
@@ -94,37 +94,104 @@ import words from 'word-list';
 }
 ```
 
-### 6. Configure Jest
+### 6. Configure Linting and Formatting
 
-**jest.config.js**:
-```javascript
-const nextJest = require('next/jest');
+```bash
+# Install ESLint and TypeScript ESLint
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-config-next
 
-const createJestConfig = nextJest({
-  dir: './',
-});
-
-const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jest-environment-jsdom',
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-  },
-  testMatch: [
-    '<rootDir>/tests/unit/**/*.test.ts',
-    '<rootDir>/tests/component/**/*.test.tsx',
-  ],
-};
-
-module.exports = createJestConfig(customJestConfig);
+# Install Prettier and ESLint integration
+npm install -D prettier eslint-config-prettier eslint-plugin-prettier
 ```
 
-**jest.setup.js**:
-```javascript
+**.eslintrc.json**:
+```json
+{
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "rules": {
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-explicit-any": "warn"
+  }
+}
+```
+
+**.prettierrc**:
+```json
+{
+  "semi": true,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false
+}
+```
+
+**Add to package.json scripts**:
+```json
+{
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  }
+}
+```
+
+### 7. Configure Vitest
+
+**vitest.config.ts**:
+```typescript
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
+    include: [
+      'tests/unit/**/*.test.ts',
+      'tests/component/**/*.test.tsx',
+    ],
+    globals: true,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+});
+```
+
+**vitest.setup.ts**:
+```typescript
 import '@testing-library/jest-dom';
 ```
 
-### 7. Configure Playwright
+**Add to package.json scripts**:
+```json
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
+  }
+}
+```
+
+### 8. Configure Playwright
 
 ```bash
 npx playwright install
@@ -147,6 +214,62 @@ export default defineConfig({
 });
 ```
 
+### 9. Configure GitHub Actions CI
+
+Create `.github/workflows/ci.yml`:
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main, 001-word-grid-game]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+```
+
 ---
 
 ## Development Workflow
@@ -163,16 +286,19 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ```bash
 # Unit tests
-npm test
+npm run test
 
 # Component tests
-npm test -- tests/component
+npm run test tests/component
 
 # E2E tests
 npx playwright test
 
-# Watch mode
-npm test -- --watch
+# Watch mode (Vitest)
+npm run test:watch
+
+# UI mode (Vitest UI)
+npm run test:ui
 ```
 
 ### Build for Production
@@ -195,7 +321,7 @@ Follow this order to ensure Test-Driven Development:
 # 1. Write test
 touch tests/unit/scoring.test.ts
 # 2. Run test (fails - red)
-npm test scoring
+npm run test scoring
 # 3. Implement
 # Edit src/lib/scoring.ts
 # 4. Run test (passes - green)
@@ -268,8 +394,11 @@ After setup, verify the following:
 - [ ] TypeScript compilation successful
 - [ ] Tailwind CSS loads correctly
 - [ ] Dictionary JSON file exists and loads
-- [ ] Jest runs (even with 0 tests)
+- [ ] `npm run lint` passes with zero errors and warnings
+- [ ] `npm run format:check` passes
+- [ ] Vitest runs (even with 0 tests)
 - [ ] Playwright installed and configured
+- [ ] GitHub Actions CI workflow configured (.github/workflows/ci.yml)
 - [ ] All directories created per structure
 - [ ] Import aliases (@/*) resolve correctly
 
@@ -298,8 +427,8 @@ After setup, verify the following:
 - Loads once on app initialization
 
 ### Tests failing with import errors
-- Verify `jest.config.js` moduleNameMapper paths
-- Ensure `@/` alias configured in both `tsconfig.json` and Jest
+- Verify `vitest.config.ts` resolve.alias paths
+- Ensure `@/` alias configured in both `tsconfig.json` and Vitest config
 
 ### Playwright can't connect
 - Ensure dev server is running on port 3000

@@ -101,7 +101,7 @@ A player can choose different grid sizes (e.g., 4x4 for easy, 9x9 for medium, 16
 - **FR-009**: System MUST support grid sizes of at least 4x4, 9x9, and 16x16
 - **FR-010**: System MUST calculate scores based on word length using the Fibonacci sequence (3 letters = 1pt, 4 letters = 2pts, 5 letters = 3pts, 6 letters = 5pts, etc.)
 - **FR-011**: System MUST support starting a new game, which resets the grid, score, found words list, and timer
-- **FR-012**: System MUST ensure letter selection forms a continuous path without crossing over itself
+- **FR-012**: System MUST ensure letter selection forms a continuous adjacent path (crossing allowed)
 - **FR-013**: System MUST display a countdown timer showing remaining time during gameplay
 - **FR-014**: System MUST end the game session when the timer reaches zero
 - **FR-015**: System MUST prevent any word submissions after the timer expires

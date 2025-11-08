@@ -14,12 +14,12 @@ Build Boggler, a time-limited word-finding game with an N x N letter grid (defau
 **Language/Version**: TypeScript 5.9 with Next.js 16+ (App Router)
 **Primary Dependencies**: React 19.2+, Next.js 16+, Tailwind CSS for styling, Liveblocks (future multiplayer)
 **Storage**: Client-side (localStorage for preferences) + Liveblocks storage (future collaborative state)
-**Testing**: Jest + React Testing Library (unit/component), Playwright (e2e)
+**Testing**: Vitest + React Testing Library (unit/component), Playwright (e2e)
 **Target Platform**: Web browsers (Chrome, Firefox, Safari, Edge - modern versions)
 **Project Type**: Web application (single-page, starting client-side only, future collaborative multiplayer)
 **Performance Goals**: <100ms word validation, <16ms frame time for smooth animations, <2s initial load
 **Constraints**: Client-side first (no custom backend), offline-capable for single-player, <5MB initial bundle
-**Scale/Scope**: Single-player MVP → multiplayer game, ~10 React components, English dictionary (~50-100k words), grid sizes 4x4 to 16x16
+**Scale/Scope**: Single-player MVP → multiplayer game, ~10 React components, English dictionary (370k+ words), grid sizes 4x4 to 16x16
 **Future Architecture**: Liveblocks.io for real-time collaborative multiplayer (shared grid, competitive scoring, simultaneous word finding)
 
 **Dictionary Source**: npm package `word-list` (370k+ words, ~500KB gzipped, MIT licensed) - see [research.md](./research.md#1-dictionary-source-decision)
@@ -94,7 +94,7 @@ src/
 │   ├── dictionary.ts         # Dictionary loading and lookup
 │   └── gameState.ts          # Game state management helpers
 ├── hooks/                    # Custom React hooks
-│   ├── useGameState.ts       # Game state hook
+│   ├── useGameStore.ts       # Zustand game store
 │   ├── useTimer.ts           # Countdown timer hook
 │   └── useWordSelection.ts   # Word selection interaction hook
 ├── types/                    # TypeScript type definitions
