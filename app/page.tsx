@@ -91,19 +91,10 @@ export default function Home() {
       {/* Found words */}
       <WordList words={session.foundWords} />
 
-      {/* New game button with settings */}
-      <div className="flex flex-col items-center gap-4 mt-4">
-        <div className="scale-90">
-          <GameSettings
-            gridSize={selectedGridSize}
-            timerDuration={selectedDuration}
-            onChange={handleSettingsChange}
-          />
-        </div>
-        <button onClick={handleNewGame} className="btn btn-secondary">
-          New Game
-        </button>
-      </div>
+      {/* New game button */}
+      <button onClick={handleNewGame} className="btn btn-secondary mt-4">
+        New Game
+      </button>
     </div>
   );
 }
