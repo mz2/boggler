@@ -1,34 +1,46 @@
 /**
  * Dictionary loading and validation (client-side)
  * Fetches dictionary from API endpoint
+ * Uses two separate dictionaries:
+ * - Seeding: Common words for grid generation (5,000 words)
+ * - Validation: Comprehensive dictionary for word validation (100,000+ words)
  */
 
 // Supported languages
 export type Language = 'english' | 'finnish';
 
-// In-memory dictionary set for fast lookups
-let dictionarySet: Set<string> | null = null;
+// In-memory dictionaries
+let validationSet: Set<string> | null = null;
+let seedingWords: string[] | null = null;
 let currentLanguage: Language | null = null;
 
 /**
- * Load dictionary from API for a specific language
- * Fetches the word list and stores words in a Set for O(1) lookup
+ * Load dictionaries from API for a specific language
+ * Fetches both seeding and validation word lists
  */
 export async function loadDictionary(language: Language = 'english'): Promise<boolean> {
   try {
     // Only reload if language changed or not loaded yet
-    if (dictionarySet && currentLanguage === language) {
+    if (validationSet && seedingWords && currentLanguage === language) {
       return true;
     }
 
-    const response = await fetch(`/api/dictionary?language=${language}`);
+    const response = await fetch(`/api/dictionary?language=${language}&type=both`);
     if (!response.ok) {
       throw new Error('Failed to fetch dictionary');
     }
 
     const data = await response.json();
-    dictionarySet = new Set(data.words);
+
+    // Store validation dictionary as Set for O(1) lookup
+    validationSet = new Set(data.validationWords);
+
+    // Store seeding words as array (used for grid generation)
+    seedingWords = data.seedingWords;
+
     currentLanguage = language;
+
+    console.log(`Dictionary loaded for ${language}: ${data.seedingCount} seeding words, ${data.validationCount} validation words`);
 
     return true;
   } catch (error) {
@@ -38,11 +50,12 @@ export async function loadDictionary(language: Language = 'english'): Promise<bo
 }
 
 /**
- * Check if a word is valid (exists in dictionary)
+ * Check if a word is valid (exists in validation dictionary)
  * Words are normalized to lowercase for comparison
+ * Uses the comprehensive dictionary for validation
  */
 export function isValidWord(word: string): boolean {
-  if (!dictionarySet) {
+  if (!validationSet) {
     throw new Error('Dictionary not loaded. Call loadDictionary() first.');
   }
 
@@ -50,33 +63,34 @@ export function isValidWord(word: string): boolean {
     return false;
   }
 
-  // Normalize to lowercase and check
-  return dictionarySet.has(word.toLowerCase());
+  // Normalize to lowercase and check against comprehensive dictionary
+  return validationSet.has(word.toLowerCase());
 }
 
 /**
- * Get dictionary size (number of words)
+ * Get validation dictionary size (number of words)
  */
 export function getDictionarySize(): number {
-  if (!dictionarySet) {
+  if (!validationSet) {
     return 0;
   }
-  return dictionarySet.size;
+  return validationSet.size;
 }
 
 /**
- * Get words from dictionary organized by length
+ * Get seeding words organized by length
  * Used for grid generation to seed guaranteed findable words
+ * Uses only common words for better gameplay
  */
 export function getWordsByLength(): Map<number, string[]> {
-  if (!dictionarySet) {
+  if (!seedingWords) {
     throw new Error('Dictionary not loaded. Call loadDictionary() first.');
   }
 
   const wordsByLength = new Map<number, string[]>();
 
-  // Organize words by length (4-9 letters for grid seeding)
-  for (const word of dictionarySet) {
+  // Organize seeding words by length (4-9 letters for grid seeding)
+  for (const word of seedingWords) {
     const upperWord = word.toUpperCase();
     const length = upperWord.length;
 

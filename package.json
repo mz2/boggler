@@ -29,12 +29,14 @@
   },
   "homepage": "https://github.com/mz2/boggler#readme",
   "dependencies": {
+    "@cspell/dict-fi-fi": "^1.1.3",
     "lodash": "^4.17.21",
     "most-common-words-by-language": "^3.0.14",
     "next": "^16.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "uuid": "^13.0.0",
+    "word-list": "^4.1.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
