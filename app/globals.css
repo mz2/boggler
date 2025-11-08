@@ -26,7 +26,7 @@ body {
 .grid-cell {
   @apply flex items-center justify-center;
   @apply w-full h-full;
-  @apply text-5xl font-bold;
+  @apply font-bold;
   @apply border-2 border-gray-400;
   @apply bg-white;
   @apply text-gray-900;
@@ -34,8 +34,9 @@ body {
   @apply cursor-pointer;
   @apply select-none;
   @apply touch-none;
-  min-width: 60px;
-  min-height: 60px;
+  /* Responsive font size based on viewport width */
+  font-size: clamp(1.5rem, 8vw, 3rem);
+  aspect-ratio: 1;
 }
 
 .grid-cell:hover {
@@ -60,8 +61,10 @@ body {
 .game-container {
   @apply min-h-screen;
   @apply flex flex-col items-center justify-center;
-  @apply p-4 sm:p-8;
-  @apply gap-6;
+  @apply p-2 sm:p-4 md:p-8;
+  @apply gap-3 sm:gap-6;
+  @apply max-w-full;
+  @apply overflow-x-hidden;
 }
 
 /* Grid container */
@@ -69,8 +72,11 @@ body {
   @apply relative;
   @apply bg-gray-100;
   @apply rounded-lg;
-  @apply p-2 sm:p-4;
+  @apply p-2;
   @apply shadow-lg;
+  @apply w-full;
+  @apply max-w-[95vw];
+  @apply mx-auto;
 }
 
 /* Word list */

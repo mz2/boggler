@@ -31,7 +31,9 @@ export function Grid({ grid }: GridProps) {
     gridTemplateRows: `repeat(${grid.size}, minmax(0, 1fr))`,
     gap: '0.25rem',
     aspectRatio: '1',
-    maxWidth: grid.size === 16 ? '600px' : grid.size === 9 ? '500px' : '400px',
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
   };
 
   return (
