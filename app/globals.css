@@ -105,10 +105,10 @@ body {
 }
 
 .word-item {
-  @apply px-4 py-2;
+  @apply px-6 py-3;
   @apply bg-blue-500 text-white;
   @apply rounded-full;
-  @apply text-base font-semibold;
+  @apply text-xl font-semibold;
   @apply shadow-md;
   animation: slideIn 0.3s ease-out;
 }
