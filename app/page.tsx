@@ -6,7 +6,8 @@ import { Grid } from '@/components/Grid/Grid';
 import { loadDictionary } from '@/lib/dictionary';
 
 export default function Home() {
-  const { session, startNewGame } = useGameStore();
+  const { session, startNewGame, submitSelection, cancelSelection, currentSelection } =
+    useGameStore();
 
   // Load dictionary on mount
   useEffect(() => {
@@ -51,6 +52,24 @@ export default function Home() {
 
       {/* Grid */}
       <Grid grid={session.grid} />
+
+      {/* Submit/Clear buttons */}
+      {currentSelection && currentSelection.positions.length >= 3 && (
+        <div className="flex gap-3">
+          <button
+            onClick={() => submitSelection()}
+            className="btn btn-primary"
+          >
+            Submit Word
+          </button>
+          <button
+            onClick={() => cancelSelection()}
+            className="btn btn-secondary"
+          >
+            Clear
+          </button>
+        </div>
+      )}
 
       {/* Found words */}
       {session.foundWords.length > 0 && (

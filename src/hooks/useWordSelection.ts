@@ -1,89 +1,56 @@
 /**
- * Custom hook for word selection using Pointer Events API
- * Improved diagonal selection by tracking last position
+ * Custom hook for word selection using click-to-build interaction
+ * Click adjacent cells to build a word, click non-adjacent to clear
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import type { Position } from '@/types/game';
 import { useGameStore } from './useGameStore';
+import { areAdjacent } from '@/lib/grid';
 
 export function useWordSelection() {
-  const [isSelecting, setIsSelecting] = useState(false);
-  const lastPositionRef = useRef<Position | null>(null);
-  const { startSelection, extendSelection, submitSelection, cancelSelection, currentSelection } =
-    useGameStore();
+  const { startSelection, extendSelection, cancelSelection, currentSelection } = useGameStore();
 
-  const handlePointerDown = useCallback(
+  const handleCellClick = useCallback(
     (position: Position, letter: string) => {
-      setIsSelecting(true);
-      lastPositionRef.current = position;
-      startSelection(position, letter);
-    },
-    [startSelection]
-  );
-
-  const handlePointerEnter = useCallback(
-    (position: Position, letter: string) => {
-      if (!isSelecting) return;
-
-      // Only extend if this is a different position than last
-      const lastPos = lastPositionRef.current;
-      if (lastPos && lastPos.row === position.row && lastPos.col === position.col) {
+      // If no current selection, start a new one
+      if (!currentSelection || currentSelection.positions.length === 0) {
+        startSelection(position, letter);
         return;
       }
 
-      // Check if already in selection (prevent immediate backtracking)
-      const alreadySelected = currentSelection?.positions.some(
+      // Check if this cell is already in the selection
+      const alreadySelected = currentSelection.positions.some(
         (pos) => pos.row === position.row && pos.col === position.col
       );
 
       if (alreadySelected) {
-        // Allow re-selecting only if it's the previous position (for path crossing)
-        const secondLast =
-          currentSelection && currentSelection.positions.length >= 2
-            ? currentSelection.positions[currentSelection.positions.length - 2]
-            : null;
-
-        if (
-          secondLast &&
-          secondLast.row === position.row &&
-          secondLast.col === position.col &&
-          currentSelection!.positions.length > 2
-        ) {
-          // Allow backtracking to previous position
+        // If clicking the last cell, do nothing (already selected)
+        const lastPos = currentSelection.positions[currentSelection.positions.length - 1];
+        if (lastPos.row === position.row && lastPos.col === position.col) {
           return;
         }
+        // If clicking any other cell in the selection, clear and start fresh
+        cancelSelection();
+        startSelection(position, letter);
+        return;
       }
 
-      lastPositionRef.current = position;
-      extendSelection(position, letter);
+      // Check if adjacent to the last selected cell
+      const lastPos = currentSelection.positions[currentSelection.positions.length - 1];
+      if (areAdjacent(lastPos, position)) {
+        // Adjacent - extend the selection
+        extendSelection(position, letter);
+      } else {
+        // Not adjacent - clear and start new selection
+        cancelSelection();
+        startSelection(position, letter);
+      }
     },
-    [isSelecting, extendSelection, currentSelection]
+    [currentSelection, startSelection, extendSelection, cancelSelection]
   );
 
-  const handlePointerUp = useCallback(() => {
-    if (!isSelecting) return;
-    setIsSelecting(false);
-    lastPositionRef.current = null;
-
-    // Submit the selection
-    const result = submitSelection();
-    if (!result.success) {
-      console.log('Word validation failed:', result.message);
-    }
-  }, [isSelecting, submitSelection]);
-
-  const handlePointerCancel = useCallback(() => {
-    setIsSelecting(false);
-    lastPositionRef.current = null;
-    cancelSelection();
-  }, [cancelSelection]);
-
   return {
-    isSelecting,
-    handlePointerDown,
-    handlePointerEnter,
-    handlePointerUp,
-    handlePointerCancel,
+    handleCellClick,
   };
 }

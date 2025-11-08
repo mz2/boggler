@@ -10,11 +10,8 @@ interface GridProps {
 }
 
 export function Grid({ grid }: GridProps) {
-  const { currentSelection } = useGameStore();
-  const { handlePointerDown, handlePointerEnter, handlePointerUp, handlePointerCancel } =
-    useWordSelection();
-
-  const { session } = useGameStore();
+  const { currentSelection, session } = useGameStore();
+  const { handleCellClick } = useWordSelection();
 
   const isPositionSelected = (row: number, col: number): boolean => {
     if (!currentSelection) return false;
@@ -31,18 +28,14 @@ export function Grid({ grid }: GridProps) {
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`,
+    gridTemplateRows: `repeat(${grid.size}, minmax(0, 1fr))`,
     gap: '0.25rem',
     aspectRatio: '1',
     maxWidth: grid.size === 16 ? '600px' : grid.size === 9 ? '500px' : '400px',
   };
 
   return (
-    <div
-      className="grid-container"
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onPointerLeave={handlePointerCancel}
-    >
+    <div className="grid-container">
       <div style={gridStyle}>
         {grid.cells.map((row, rowIndex) =>
           row.map((cell) => (
@@ -51,8 +44,7 @@ export function Grid({ grid }: GridProps) {
               cell={cell}
               isSelected={isPositionSelected(cell.row, cell.col)}
               isFound={isPositionInFoundWord(cell.row, cell.col)}
-              onPointerDown={() => handlePointerDown({ row: cell.row, col: cell.col }, cell.letter)}
-              onPointerEnter={() => handlePointerEnter({ row: cell.row, col: cell.col }, cell.letter)}
+              onClick={() => handleCellClick({ row: cell.row, col: cell.col }, cell.letter)}
             />
           ))
         )}

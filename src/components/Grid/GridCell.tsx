@@ -6,22 +6,14 @@ interface GridCellProps {
   cell: GridCellType;
   isSelected: boolean;
   isFound: boolean;
-  onPointerDown: () => void;
-  onPointerEnter: () => void;
+  onClick: () => void;
 }
 
-export function GridCell({
-  cell,
-  isSelected,
-  isFound,
-  onPointerDown,
-  onPointerEnter,
-}: GridCellProps) {
+export function GridCell({ cell, isSelected, isFound, onClick }: GridCellProps) {
   return (
     <div
       className={`grid-cell ${isSelected ? 'selected' : ''} ${isFound ? 'found' : ''}`}
-      onPointerDown={onPointerDown}
-      onPointerEnter={onPointerEnter}
+      onClick={onClick}
       data-row={cell.row}
       data-col={cell.col}
     >
