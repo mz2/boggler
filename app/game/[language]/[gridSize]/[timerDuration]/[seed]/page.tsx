@@ -33,7 +33,7 @@ function GamePageContent() {
   const seedParam = params.seed as string;
   const seed = seedParam ? parseInt(seedParam, 10) : undefined;
 
-  const { session, submitSelection, cancelSelection, currentSelection, startNewGame } = useGameStore();
+  const { session, submitSelection, cancelSelection, currentSelection, startNewGame, removeLastFromSelection } = useGameStore();
   const { timeRemaining, isWarning } = useTimer();
   const isCreatingGame = useRef(false);
 
@@ -89,11 +89,16 @@ function GamePageContent() {
         event.preventDefault();
         cancelSelection();
       }
+      // Backspace to remove last letter
+      else if (event.key === 'Backspace' && currentSelection) {
+        event.preventDefault();
+        removeLastFromSelection();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSelection, submitSelection, cancelSelection]);
+  }, [currentSelection, submitSelection, cancelSelection, removeLastFromSelection]);
 
   // Show loading or redirect while waiting
   if (!session) {
@@ -124,7 +129,7 @@ function GamePageContent() {
               onClick={() => submitSelection()}
               className="btn btn-primary"
               disabled={!currentSelection || currentSelection.positions.length < 4}
-              title="Submit word (Enter) | Cancel selection (ESC)"
+              title="Submit word (Enter) | Remove last letter (Backspace) | Cancel selection (ESC)"
             >
               Submit
             </button>

@@ -131,7 +131,7 @@ export function Grid({ grid, debugMode = false }: GridProps) {
 
       {/* Current selection display - always reserve space */}
       <div className="mt-4 text-center min-h-[3rem] flex items-center justify-center">
-        <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+        <p className="text-4xl font-bold" style={{ color: 'var(--foreground)' }}>
           {currentSelection?.wordText || '\u00A0'}
         </p>
       </div>
