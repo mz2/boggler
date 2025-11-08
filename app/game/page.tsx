@@ -69,25 +69,32 @@ export default function GamePage() {
 
   return (
     <div className="game-container">
-      {/* Score, Timer, and Submit button */}
-      <div className="flex justify-between items-center w-full max-w-2xl gap-6">
-        <div className="flex items-center gap-6">
-          <ScoreBoard score={session.score} wordCount={session.foundWords.length} />
-          <Timer timeRemaining={timeRemaining} isWarning={isWarning} />
+      {/* Grid */}
+      <div className="w-full max-w-[600px]">
+        {/* Score, Timer, and Submit button */}
+        <div className="grid grid-cols-3 items-center w-full gap-4 mb-4">
+          <div className="justify-self-start">
+            <ScoreBoard score={session.score} wordCount={session.foundWords.length} />
+          </div>
+
+          <div className="justify-self-center">
+            <Timer timeRemaining={timeRemaining} isWarning={isWarning} />
+          </div>
+
+          <div className="justify-self-end">
+            <button
+              onClick={() => submitSelection()}
+              className="btn btn-primary"
+              disabled={!currentSelection || currentSelection.positions.length < 4}
+              title="Submit word (Enter) | Cancel selection (ESC)"
+            >
+              Submit
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={() => submitSelection()}
-          className="btn btn-primary"
-          disabled={!currentSelection || currentSelection.positions.length < 4}
-          title="Submit word (Enter) | Cancel selection (ESC)"
-        >
-          Submit
-        </button>
+        <Grid grid={session.grid} debugMode={debugMode} />
       </div>
-
-      {/* Grid */}
-      <Grid grid={session.grid} debugMode={debugMode} />
 
       {/* Found words */}
       <WordList words={session.foundWords} />

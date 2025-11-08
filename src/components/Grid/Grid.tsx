@@ -140,7 +140,7 @@ export function Grid({ grid, debugMode = false }: GridProps) {
       {debugMode && grid.seededWords && grid.seededWords.length > 0 && (
         <div className="mt-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            Debug: Seeded Words ({grid.seededWords.length}) - Hover to highlight
+            Debug: Seeded Words - Hover to highlight
           </p>
           <div className="flex flex-wrap gap-2 justify-center">
             {grid.seededWords.map((word, index) => {

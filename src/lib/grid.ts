@@ -101,15 +101,15 @@ function tryPlaceWord(
   const used = new Set<string>();
 
   function backtrack(currentPos: Position, letterIndex: number): boolean {
-    // Successfully placed entire word
-    if (letterIndex === word.length) {
-      return true;
-    }
-
     // Mark current position as used
     const posKey = `${currentPos.row},${currentPos.col}`;
     used.add(posKey);
     path.push(currentPos);
+
+    // Successfully placed entire word
+    if (letterIndex === word.length) {
+      return true;
+    }
 
     // Try all adjacent positions for the next letter
     const adjacentPositions = getAdjacentPositions(currentPos, size);
