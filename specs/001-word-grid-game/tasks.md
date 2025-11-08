@@ -26,19 +26,19 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Next.js 16 project with TypeScript, Tailwind CSS, and App Router
-- [ ] T002 Install core dependencies: zustand, uuid, word-list
-- [ ] T003 [P] Install testing dependencies: vitest, @vitejs/plugin-react, @testing-library/react, @testing-library/jest-dom, jsdom, @playwright/test, @types/uuid
-- [ ] T004 [P] Configure Vitest (vitest.config.ts and vitest.setup.ts) with React Testing Library
-- [ ] T005 [P] Configure Playwright (playwright.config.ts) for e2e tests
-- [ ] T006 [P] Configure TypeScript paths in tsconfig.json (@/* aliases)
-- [ ] T006a [P] Install ESLint and TypeScript ESLint dependencies: eslint, @typescript-eslint/parser, @typescript-eslint/eslint-plugin, eslint-config-next
-- [ ] T006b [P] Create ESLint configuration (.eslintrc.json) with Next.js + TypeScript rules
-- [ ] T006c [P] Install Prettier and ESLint integration: prettier, eslint-config-prettier, eslint-plugin-prettier
-- [ ] T006d [P] Create Prettier configuration (.prettierrc) with project code style rules
-- [ ] T006e [P] Add lint and format scripts to package.json: "lint", "lint:fix", "format", "format:check"
-- [ ] T006f Create GitHub Actions CI workflow (.github/workflows/ci.yml) to run lint, format:check, test (Vitest), and Playwright tests on PRs and pushes to main
-- [ ] T007 Create directory structure: src/{components,lib,hooks,types,constants}, tests/{unit,component,e2e}
+- [X] T001 Initialize Next.js 16 project with TypeScript, Tailwind CSS, and App Router
+- [X] T002 Install core dependencies: zustand, uuid, word-list
+- [X] T003 [P] Install testing dependencies: vitest, @vitejs/plugin-react, @testing-library/react, @testing-library/jest-dom, jsdom, @playwright/test, @types/uuid
+- [X] T004 [P] Configure Vitest (vitest.config.ts and vitest.setup.ts) with React Testing Library
+- [X] T005 [P] Configure Playwright (playwright.config.ts) for e2e tests
+- [X] T006 [P] Configure TypeScript paths in tsconfig.json (@/* aliases)
+- [X] T006a [P] Install ESLint and TypeScript ESLint dependencies: eslint, @typescript-eslint/parser, @typescript-eslint/eslint-plugin, eslint-config-next
+- [X] T006b [P] Create ESLint configuration (.eslintrc.json) with Next.js + TypeScript rules
+- [X] T006c [P] Install Prettier and ESLint integration: prettier, eslint-config-prettier, eslint-plugin-prettier
+- [X] T006d [P] Create Prettier configuration (.prettierrc) with project code style rules
+- [X] T006e [P] Add lint and format scripts to package.json: "lint", "lint:fix", "format", "format:check"
+- [X] T006f Create GitHub Actions CI workflow (.github/workflows/ci.yml) to run lint, format:check, test (Vitest), and Playwright tests on PRs and pushes to main
+- [X] T007 Create directory structure: src/{components,lib,hooks,types,constants}, tests/{unit,component,e2e}
 
 ---
 
