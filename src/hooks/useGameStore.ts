@@ -9,6 +9,7 @@ import { createNewSession, addFoundWord } from '@/lib/gameState';
 import { validateWordSubmission } from '@/lib/validation';
 import { DEFAULT_GRID_SIZE, DEFAULT_TIMER_DURATION } from '@/constants/config';
 import { playSuccessSound, playErrorSound } from '@/lib/audio';
+import { triggerConfetti } from '@/lib/confetti';
 
 interface GameStore {
   // State
@@ -118,6 +119,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Play success sound for accepted words
     playSuccessSound();
+
+    // Trigger confetti for 5+ letter words
+    if (result.word!.length >= 5) {
+      triggerConfetti();
+    }
 
     // Add word to session
     const updatedSession = addFoundWord(session, result.word!, currentSelection.positions);
