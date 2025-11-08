@@ -43,9 +43,9 @@ export function useWordSelection() {
         // Adjacent - extend the selection
         extendSelection(position, letter);
       } else {
-        // Not adjacent - clear and start new selection
+        // Not adjacent - just clear the selection (don't start a new one)
+        // User needs to tap again to start selecting from this cell
         cancelSelection();
-        startSelection(position, letter);
       }
     },
     [currentSelection, startSelection, extendSelection, removeLastFromSelection, cancelSelection]

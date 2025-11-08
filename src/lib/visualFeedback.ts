@@ -40,16 +40,48 @@ export function flashScreenError(): void {
  * Animates the specific cells that were part of the accepted word
  */
 export function highlightCells(positions: Position[]): void {
+  console.log('highlightCells called with positions:', positions);
   positions.forEach((pos) => {
     const cell = document.querySelector(`[data-row="${pos.row}"][data-col="${pos.col}"]`);
+    console.log(`Looking for cell at row=${pos.row}, col=${pos.col}`, cell);
     if (cell instanceof HTMLElement) {
-      // Add success class
+      console.log('Adding cell-success class to cell:', cell);
+
+      // Store original styles
+      const originalBg = cell.style.backgroundColor;
+      const originalBorder = cell.style.borderColor;
+      const originalTransform = cell.style.transform;
+      const originalTransition = cell.style.transition;
+
+      // Add the class AND set inline styles as backup
       cell.classList.add('cell-success');
 
-      // Remove after animation completes (2s animation)
+      // Set initial state with inline styles (these override most CSS)
+      cell.style.backgroundColor = 'rgb(191, 219, 254)';
+      cell.style.borderColor = 'rgb(96, 165, 250)';
+      cell.style.transform = 'scale(1.1)';
+      cell.style.transition = 'all 1s ease-out';
+
+      // Animate to final state
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          cell.style.transform = 'scale(1)';
+          cell.style.backgroundColor = 'rgb(255, 255, 255)';
+          cell.style.borderColor = 'rgb(156, 163, 175)';
+        });
+      });
+
+      // Clean up after animation completes
       setTimeout(() => {
+        console.log('Removing cell-success class and resetting styles:', cell);
         cell.classList.remove('cell-success');
-      }, 2000);
+        cell.style.backgroundColor = originalBg;
+        cell.style.borderColor = originalBorder;
+        cell.style.transform = originalTransform;
+        cell.style.transition = originalTransition;
+      }, 1000);
+    } else {
+      console.warn('Cell not found or not an HTMLElement:', pos);
     }
   });
 }

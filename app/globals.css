@@ -58,27 +58,27 @@ body {
 }
 
 .grid-cell.cell-success {
-  @apply bg-blue-200;
-  @apply text-gray-900;
-  @apply border-blue-400;
-  animation: cellSuccessFade 2s ease-out forwards;
+  background-color: rgb(191 219 254) !important;
+  color: rgb(17 24 39) !important;
+  border-color: rgb(96 165 250) !important;
+  animation: cellSuccessFade 2s ease-out forwards !important;
 }
 
 @keyframes cellSuccessFade {
   0% {
-    background-color: rgb(191 219 254);
-    border-color: rgb(96 165 250);
-    transform: scale(1.1);
+    background-color: rgb(191 219 254) !important;
+    border-color: rgb(96 165 250) !important;
+    transform: scale(1.1) !important;
   }
   50% {
-    background-color: rgb(191 219 254);
-    border-color: rgb(96 165 250);
-    transform: scale(1.05);
+    background-color: rgb(191 219 254) !important;
+    border-color: rgb(96 165 250) !important;
+    transform: scale(1.05) !important;
   }
   100% {
-    background-color: transparent;
-    border-color: rgb(156 163 175);
-    transform: scale(1);
+    background-color: rgb(255 255 255) !important;
+    border-color: rgb(156 163 175) !important;
+    transform: scale(1) !important;
   }
 }
 
@@ -167,6 +167,19 @@ body {
 .btn-secondary {
   @apply bg-gray-200 text-gray-800;
   @apply hover:bg-gray-300;
+}
+
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+  @apply shadow-none;
+}
+
+.btn:disabled:hover {
+  @apply shadow-none;
+}
+
+.btn-primary:disabled:hover {
+  @apply bg-blue-600;
 }
 
 /* Game Over Screen */

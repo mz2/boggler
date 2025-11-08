@@ -61,43 +61,80 @@ async function getDictionaryByLength(): Promise<Map<number, string[]>> {
 }
 
 /**
- * Try to place a word in the grid starting from a position
+ * Get all adjacent positions for a given position
+ */
+function getAdjacentPositions(pos: Position, size: number): Position[] {
+  const adjacent: Position[] = [];
+  const directions = [
+    [-1, -1], [-1, 0], [-1, 1],
+    [0, -1],           [0, 1],
+    [1, -1],  [1, 0],  [1, 1],
+  ];
+
+  for (const [dr, dc] of directions) {
+    const row = pos.row + dr;
+    const col = pos.col + dc;
+    if (row >= 0 && row < size && col >= 0 && col < size) {
+      adjacent.push({ row, col });
+    }
+  }
+
+  return adjacent;
+}
+
+/**
+ * Try to place a word in the grid starting from a position using zigzag pattern
+ * Uses backtracking to explore all possible paths through adjacent cells
  */
 function tryPlaceWord(cells: GridCell[][], word: string, startRow: number, startCol: number, size: number): boolean {
   if (startRow >= size || startCol >= size) return false;
 
-  // Try different directions: horizontal, vertical, diagonal
-  const directions = [
-    { dr: 0, dc: 1 },   // horizontal right
-    { dr: 1, dc: 0 },   // vertical down
-    { dr: 1, dc: 1 },   // diagonal down-right
-    { dr: 1, dc: -1 },  // diagonal down-left
-  ];
+  const path: Position[] = [];
+  const used = new Set<string>();
 
-  for (const { dr, dc } of directions) {
-    let canPlace = true;
-    const positions: Position[] = [];
-
-    // Check if word fits in this direction
-    for (let i = 0; i < word.length; i++) {
-      const row = startRow + i * dr;
-      const col = startCol + i * dc;
-
-      if (row < 0 || row >= size || col < 0 || col >= size) {
-        canPlace = false;
-        break;
-      }
-
-      positions.push({ row, col });
-    }
-
-    // Place the word if it fits
-    if (canPlace) {
-      for (let i = 0; i < word.length; i++) {
-        cells[positions[i].row][positions[i].col].letter = word[i];
-      }
+  function backtrack(currentPos: Position, letterIndex: number): boolean {
+    // Successfully placed entire word
+    if (letterIndex === word.length) {
       return true;
     }
+
+    // Mark current position as used
+    const posKey = `${currentPos.row},${currentPos.col}`;
+    used.add(posKey);
+    path.push(currentPos);
+
+    // Try all adjacent positions for the next letter
+    const adjacentPositions = getAdjacentPositions(currentPos, size);
+
+    // Shuffle adjacent positions for variety
+    const shuffled = adjacentPositions.sort(() => Math.random() - 0.5);
+
+    for (const nextPos of shuffled) {
+      const nextPosKey = `${nextPos.row},${nextPos.col}`;
+
+      // Skip if already used in this path
+      if (used.has(nextPosKey)) continue;
+
+      // Try placing the next letter here
+      if (backtrack(nextPos, letterIndex + 1)) {
+        return true;
+      }
+    }
+
+    // Backtrack: remove current position from used set and path
+    used.delete(posKey);
+    path.pop();
+    return false;
+  }
+
+  // Start the backtracking from the starting position
+  const startPos = { row: startRow, col: startCol };
+  if (backtrack(startPos, 1)) {
+    // Place the word along the found path
+    for (let i = 0; i < path.length; i++) {
+      cells[path[i].row][path[i].col].letter = word[i];
+    }
+    return true;
   }
 
   return false;

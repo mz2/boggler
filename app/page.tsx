@@ -1,20 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/hooks/useGameStore';
-import { useTimer } from '@/hooks/useTimer';
-import { Grid } from '@/components/Grid/Grid';
-import { Timer } from '@/components/GameControls/Timer';
-import { ScoreBoard } from '@/components/GameControls/ScoreBoard';
 import { GameSettings } from '@/components/GameControls/GameSettings';
-import { WordList } from '@/components/WordList/WordList';
-import { GameOver } from '@/components/GameOver/GameOver';
 import { loadDictionary } from '@/lib/dictionary';
 
 export default function Home() {
-  const { session, startNewGame, submitSelection, cancelSelection, currentSelection } =
-    useGameStore();
-  const { timeRemaining, isWarning } = useTimer();
+  const router = useRouter();
+  const { startNewGame } = useGameStore();
   const [selectedGridSize, setSelectedGridSize] = useState(9);
   const [selectedDuration, setSelectedDuration] = useState(180);
 
@@ -27,6 +21,7 @@ export default function Home() {
 
   const handleNewGame = () => {
     startNewGame(selectedGridSize, selectedDuration);
+    router.push('/game');
   };
 
   const handleSettingsChange = (settings: { gridSize: number; timerDuration: number }) => {
@@ -34,66 +29,20 @@ export default function Home() {
     setSelectedDuration(settings.timerDuration);
   };
 
-  // Show game over screen
-  if (session && session.gameState === 'gameover') {
-    return <GameOver score={session.score} foundWords={session.foundWords} onNewGame={handleNewGame} />;
-  }
-
-  if (!session) {
-    return (
-      <div className="game-container">
-        <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-gray-100">Boggler</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-          Find as many words as you can by connecting adjacent letters!
-        </p>
-
-        <GameSettings
-          gridSize={selectedGridSize}
-          timerDuration={selectedDuration}
-          onChange={handleSettingsChange}
-        />
-
-        <button onClick={handleNewGame} className="btn btn-primary mt-6">
-          New Game
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="game-container">
-      {/* Timer */}
-      <Timer timeRemaining={timeRemaining} isWarning={isWarning} />
+      <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-gray-100">Boggler</h1>
+      <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+        Find as many words as you can by connecting adjacent letters!
+      </p>
 
-      {/* Score display */}
-      <ScoreBoard score={session.score} wordCount={session.foundWords.length} />
+      <GameSettings
+        gridSize={selectedGridSize}
+        timerDuration={selectedDuration}
+        onChange={handleSettingsChange}
+      />
 
-      {/* Grid */}
-      <Grid grid={session.grid} />
-
-      {/* Submit/Clear buttons */}
-      {currentSelection && currentSelection.positions.length >= 3 && (
-        <div className="flex gap-3">
-          <button
-            onClick={() => submitSelection()}
-            className="btn btn-primary"
-          >
-            Submit Word
-          </button>
-          <button
-            onClick={() => cancelSelection()}
-            className="btn btn-secondary"
-          >
-            Clear
-          </button>
-        </div>
-      )}
-
-      {/* Found words */}
-      <WordList words={session.foundWords} />
-
-      {/* New game button */}
-      <button onClick={handleNewGame} className="btn btn-secondary mt-4">
+      <button onClick={handleNewGame} className="btn btn-primary mt-6">
         New Game
       </button>
     </div>
