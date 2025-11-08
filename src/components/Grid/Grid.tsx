@@ -45,12 +45,12 @@ export function Grid({ grid }: GridProps) {
         )}
       </div>
 
-      {/* Current selection display */}
-      {currentSelection && (
-        <div className="mt-4 text-center">
-          <p className="text-xl font-bold text-blue-600">{currentSelection.wordText}</p>
-        </div>
-      )}
+      {/* Current selection display - always reserve space */}
+      <div className="mt-4 text-center min-h-[3rem] flex items-center justify-center">
+        <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+          {currentSelection?.wordText || '\u00A0'}
+        </p>
+      </div>
     </div>
   );
 }
