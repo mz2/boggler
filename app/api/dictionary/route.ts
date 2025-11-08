@@ -52,10 +52,12 @@ async function loadValidationDictionary(language: string): Promise<Set<string>> 
     // Use word-list package for comprehensive English dictionary
     wordFilePath = join(process.cwd(), 'node_modules/word-list/words.txt');
   } else if (language === 'finnish') {
-    // Use cspell Finnish dictionary
+    // For Finnish, use the same source but take all words (not just first 5k)
+    // TODO: Replace with comprehensive Finnish dictionary when available
     wordFilePath = join(
       process.cwd(),
-      'node_modules/@cspell/dict-fi-fi/dict/fi_FI.txt'
+      'node_modules/most-common-words-by-language/build/resources',
+      `${language}.txt`
     );
   } else {
     throw new Error(`Unsupported language: ${language}`);
