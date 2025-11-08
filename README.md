@@ -69,6 +69,30 @@ npm run build
 npm start
 ```
 
+## Deployment
+
+### Deploy to Vercel
+
+Boggler is optimized for deployment on Vercel. See [VERCEL_SETUP.md](./VERCEL_SETUP.md) for detailed setup instructions.
+
+**Quick deploy:**
+
+1. Push to GitHub
+2. Import repository on [Vercel](https://vercel.com)
+3. Deploy automatically!
+
+The included GitHub Actions workflow will:
+- Run tests, linting, and formatting checks
+- Build the application
+- Deploy to Vercel automatically on push to main
+
+For CI/CD setup, you'll need to add three GitHub secrets:
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+See [VERCEL_SETUP.md](./VERCEL_SETUP.md) for step-by-step instructions.
+
 ## Testing
 
 This project follows Test-Driven Development (TDD) principles.

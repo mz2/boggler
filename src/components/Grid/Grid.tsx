@@ -51,8 +51,8 @@ export function Grid({ grid }: GridProps) {
           )}
         </div>
 
-        {/* Path visualization overlay */}
-        {currentSelection && currentSelection.positions.length > 1 && (
+        {/* Path visualization overlay for found words */}
+        {session && session.foundWords.length > 0 && (
           <svg
             style={{
               position: 'absolute',
@@ -64,33 +64,39 @@ export function Grid({ grid }: GridProps) {
             }}
             viewBox={`0 0 ${grid.size} ${grid.size}`}
           >
-            {/* Draw lines between positions */}
-            {currentSelection.positions.map((pos, index) => {
-              if (index === 0) return null;
-              const prevPos = currentSelection.positions[index - 1];
-              return (
-                <line
-                  key={`line-${index}`}
-                  x1={prevPos.col + 0.5}
-                  y1={prevPos.row + 0.5}
-                  x2={pos.col + 0.5}
-                  y2={pos.row + 0.5}
-                  stroke="#3b82f6"
-                  strokeWidth="0.15"
-                  strokeLinecap="round"
-                />
-              );
-            })}
+            {session.foundWords.map((word, wordIndex) => (
+              <g key={`word-${word.id}`}>
+                {/* Draw lines between positions for this word */}
+                {word.positions.map((pos, index) => {
+                  if (index === 0) return null;
+                  const prevPos = word.positions[index - 1];
+                  return (
+                    <line
+                      key={`line-${wordIndex}-${index}`}
+                      x1={prevPos.col + 0.5}
+                      y1={prevPos.row + 0.5}
+                      x2={pos.col + 0.5}
+                      y2={pos.row + 0.5}
+                      stroke="#93c5fd"
+                      strokeWidth="0.1"
+                      strokeLinecap="round"
+                      opacity="0.6"
+                    />
+                  );
+                })}
 
-            {/* Draw dots at each position */}
-            {currentSelection.positions.map((pos, index) => (
-              <circle
-                key={`dot-${index}`}
-                cx={pos.col + 0.5}
-                cy={pos.row + 0.5}
-                r="0.2"
-                fill="#3b82f6"
-              />
+                {/* Draw dots at each position for this word */}
+                {word.positions.map((pos, index) => (
+                  <circle
+                    key={`dot-${wordIndex}-${index}`}
+                    cx={pos.col + 0.5}
+                    cy={pos.row + 0.5}
+                    r="0.15"
+                    fill="#93c5fd"
+                    opacity="0.6"
+                  />
+                ))}
+              </g>
             ))}
           </svg>
         )}
