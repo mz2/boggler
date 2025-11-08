@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useGameStore } from '@/hooks/useGameStore';
 import { useTimer } from '@/hooks/useTimer';
 import { Grid } from '@/components/Grid/Grid';
@@ -12,6 +12,8 @@ import { GameOver } from '@/components/GameOver/GameOver';
 
 export default function GamePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const debugMode = searchParams.get('debug') === 'true';
   const { session, submitSelection, cancelSelection, currentSelection, startNewGame } = useGameStore();
   const { timeRemaining, isWarning } = useTimer();
 
@@ -80,7 +82,7 @@ export default function GamePage() {
       </div>
 
       {/* Grid */}
-      <Grid grid={session.grid} />
+      <Grid grid={session.grid} debugMode={debugMode} />
 
       {/* Found words */}
       <WordList words={session.foundWords} />
