@@ -2,7 +2,7 @@
  * Grid generation and utility functions
  */
 
-import type { Grid, GridCell, Position, SeededWord } from '@/types/game';
+import type { Grid, GridCell, Position, SeededWord, Language } from '@/types/game';
 import { LETTER_FREQUENCIES } from '@/constants/config';
 import { getWordsByLength, loadDictionary } from './dictionary';
 
@@ -32,32 +32,35 @@ function getRandomLetter(): string {
 }
 
 /**
- * Dictionary cache organized by word length
+ * Dictionary cache organized by word length and language
  * Loaded from the actual dictionary on first use
  */
-let dictionaryByLength: Map<number, string[]> | null = null;
+const dictionaryCache = new Map<Language, Map<number, string[]>>();
 
 /**
- * Get dictionary words organized by length
+ * Get dictionary words organized by length for a specific language
  * Uses the same dictionary that validates words during gameplay
  */
-async function getDictionaryByLength(): Promise<Map<number, string[]>> {
-  if (dictionaryByLength) return dictionaryByLength;
+async function getDictionaryByLength(language: Language): Promise<Map<number, string[]>> {
+  if (dictionaryCache.has(language)) {
+    return dictionaryCache.get(language)!;
+  }
 
-  // Ensure dictionary is loaded
-  const success = await loadDictionary();
+  // Ensure dictionary is loaded for this language
+  const success = await loadDictionary(language);
   if (!success) {
-    throw new Error('Failed to load dictionary for grid generation');
+    throw new Error(`Failed to load dictionary for grid generation (language: ${language})`);
   }
 
   // Get words organized by length
-  dictionaryByLength = getWordsByLength();
+  const wordsByLength = getWordsByLength();
 
-  if (dictionaryByLength.size === 0) {
-    throw new Error('Dictionary loaded but contains no valid words (3-9 letters)');
+  if (wordsByLength.size === 0) {
+    throw new Error(`Dictionary loaded but contains no valid words (4-9 letters) for language: ${language}`);
   }
 
-  return dictionaryByLength;
+  dictionaryCache.set(language, wordsByLength);
+  return wordsByLength;
 }
 
 /**
@@ -180,7 +183,7 @@ function tryPlaceWord(
  * Generate a new grid of specified size with guaranteed words
  * Seeds words of length 4-9 in decreasing frequency
  */
-export async function generateGrid(size: number): Promise<Grid> {
+export async function generateGrid(size: number, language: Language = 'english'): Promise<Grid> {
   const cells: GridCell[][] = [];
   const seededWords: SeededWord[] = [];
   const occupiedCells = new Set<string>(); // Track cells used by seeded words
@@ -207,8 +210,8 @@ export async function generateGrid(size: number): Promise<Grid> {
     9: Math.max(1, Math.floor(size / 6)),  // Fewer 9-letter words
   };
 
-  // Load dictionary words
-  const dictionary = await getDictionaryByLength();
+  // Load dictionary words for specified language
+  const dictionary = await getDictionaryByLength(language);
 
   // Seed words into the grid (longer words first for better placement)
   for (let length = 9; length >= 4; length--) {

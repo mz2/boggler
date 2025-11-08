@@ -3,7 +3,7 @@
  */
 
 import { create } from 'zustand';
-import type { GameSession, Position, LetterSelection } from '@/types/game';
+import type { GameSession, Position, LetterSelection, Language } from '@/types/game';
 import { generateGrid } from '@/lib/grid';
 import { createNewSession, addFoundWord } from '@/lib/gameState';
 import { validateWordSubmission } from '@/lib/validation';
@@ -18,7 +18,7 @@ interface GameStore {
   currentSelection: LetterSelection | null;
 
   // Actions
-  startNewGame: (gridSize?: number, timerDuration?: number) => Promise<void>;
+  startNewGame: (gridSize?: number, timerDuration?: number, language?: Language) => Promise<void>;
   startSelection: (position: Position, letter: string) => void;
   extendSelection: (position: Position, letter: string) => void;
   removeLastFromSelection: () => void;
@@ -34,11 +34,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   startNewGame: async (
     gridSize: number = DEFAULT_GRID_SIZE,
-    timerDuration: number = DEFAULT_TIMER_DURATION
+    timerDuration: number = DEFAULT_TIMER_DURATION,
+    language: Language = 'english'
   ) => {
     try {
-      const grid = await generateGrid(gridSize);
-      const session = createNewSession({ gridSize, timerDuration, grid });
+      const grid = await generateGrid(gridSize, language);
+      const session = createNewSession({ gridSize, timerDuration, language, grid });
 
       set({
         session: { ...session, gameState: 'playing' },

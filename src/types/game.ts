@@ -2,6 +2,9 @@
  * Core types for Boggler game
  */
 
+// Supported languages
+export type Language = 'english' | 'finnish';
+
 // Basic position type
 export interface Position {
   row: number;
@@ -67,6 +70,7 @@ export type TimerDuration = 60 | 180 | 300;
 export interface GameSettings {
   gridSize: GridSize;
   timerDuration: TimerDuration;
+  language: Language;
 }
 
 // Complete game session
@@ -79,6 +83,7 @@ export interface GameSession {
   score: number;
   foundWords: FoundWord[];
   gameState: GameState;
+  language: Language;
   createdAt: Date;
   endedAt: Date | null;
 }

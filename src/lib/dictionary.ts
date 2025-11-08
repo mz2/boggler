@@ -3,22 +3,32 @@
  * Fetches dictionary from API endpoint
  */
 
+// Supported languages
+export type Language = 'english' | 'finnish';
+
 // In-memory dictionary set for fast lookups
 let dictionarySet: Set<string> | null = null;
+let currentLanguage: Language | null = null;
 
 /**
- * Load dictionary from API
+ * Load dictionary from API for a specific language
  * Fetches the word list and stores words in a Set for O(1) lookup
  */
-export async function loadDictionary(): Promise<boolean> {
+export async function loadDictionary(language: Language = 'english'): Promise<boolean> {
   try {
-    const response = await fetch('/api/dictionary');
+    // Only reload if language changed or not loaded yet
+    if (dictionarySet && currentLanguage === language) {
+      return true;
+    }
+
+    const response = await fetch(`/api/dictionary?language=${language}`);
     if (!response.ok) {
       throw new Error('Failed to fetch dictionary');
     }
 
     const data = await response.json();
     dictionarySet = new Set(data.words);
+    currentLanguage = language;
 
     return true;
   } catch (error) {

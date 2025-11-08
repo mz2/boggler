@@ -1,24 +1,47 @@
 /**
- * GameSettings component - dropdowns for grid size and timer duration
+ * GameSettings component - dropdowns for grid size, timer duration, and language
  */
+
+import type { Language } from '@/types/game';
 
 interface GameSettingsProps {
   gridSize: number;
   timerDuration: number;
-  onChange: (settings: { gridSize: number; timerDuration: number }) => void;
+  language: Language;
+  onChange: (settings: { gridSize: number; timerDuration: number; language: Language }) => void;
 }
 
-export function GameSettings({ gridSize, timerDuration, onChange }: GameSettingsProps) {
+export function GameSettings({ gridSize, timerDuration, language, onChange }: GameSettingsProps) {
   const handleGridSizeChange = (newSize: number) => {
-    onChange({ gridSize: newSize, timerDuration });
+    onChange({ gridSize: newSize, timerDuration, language });
   };
 
   const handleTimerChange = (newDuration: number) => {
-    onChange({ gridSize, timerDuration: newDuration });
+    onChange({ gridSize, timerDuration: newDuration, language });
+  };
+
+  const handleLanguageChange = (newLanguage: Language) => {
+    onChange({ gridSize, timerDuration, language: newLanguage });
   };
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Language Selector */}
+      <div className="flex items-center gap-4">
+        <label htmlFor="language" className="text-lg font-medium text-gray-900 dark:text-gray-100 w-24">
+          Language:
+        </label>
+        <select
+          id="language"
+          value={language}
+          onChange={(e) => handleLanguageChange(e.target.value as Language)}
+          className="px-4 py-2 border-2 border-gray-300 rounded-lg font-medium focus:outline-none focus:border-blue-500 bg-white text-gray-900"
+        >
+          <option value="english">English</option>
+          <option value="finnish">Finnish</option>
+        </select>
+      </div>
+
       {/* Grid Size Selector */}
       <div className="flex items-center gap-4">
         <label htmlFor="grid-size" className="text-lg font-medium text-gray-900 dark:text-gray-100 w-24">
